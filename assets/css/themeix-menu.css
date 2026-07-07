@@ -328,6 +328,23 @@
     font-size: 0.9375rem;
     font-weight: 400;
 }
+
+.themeix-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1.5rem;
+    background-color: var(--menu-active-color);
+    color: #ffffff;
+    text-decoration: none;
+    border-radius: var(--submenu-border-radius);
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+}
+
+.themeix-button:hover {
+    background-color: var(--menu-hover-color);
+}
  
 .themeix-featured-content {
     display: flex;

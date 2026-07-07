@@ -28,10 +28,6 @@ function mergeGhostWithJSON(ghostMenu, jsonConfig) {
         merged.groups = mergeGroups(ghostMenu.children, jsonConfig.groups);
     }
 
-    if (jsonConfig.featured) {
-        merged.featured = jsonConfig.featured;
-    }
-
     if (jsonConfig.width) {
         merged.settings.width = jsonConfig.width;
     }

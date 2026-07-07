@@ -20,7 +20,6 @@ function parseNavigation(navElement) {
             icon: null,
             badge: null,
             groups: [],
-            featured: null,
             settings: {}
         };
 
@@ -53,7 +52,6 @@ function parseSubmenu(submenuElement, parentId) {
             icon: null,
             badge: null,
             groups: [],
-            featured: null,
             settings: {}
         };
 
@@ -126,7 +124,6 @@ function normalizeMenuItem(item) {
         icon: item.icon || null,
         badge: item.badge || null,
         groups: Array.isArray(item.groups) ? item.groups : [],
-        featured: item.featured || null,
         settings: typeof item.settings === 'object' ? item.settings : {}
     };
 }

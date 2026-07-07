@@ -526,8 +526,7 @@ const ThemeixMenu = (function() {
             childrenCount: item.children.length,
             icon: item.icon,
             badge: item.badge,
-            groupsCount: item.groups.length,
-            featured: !!item.featured
+            groupsCount: item.groups.length
         });
         
         const li = document.createElement('li');
@@ -588,47 +587,6 @@ const ThemeixMenu = (function() {
 
         console.log('DEBUG: Menu element created for:', item.title, 'Type:', item.type);
         return li;
-    }
-
-    function createFeaturedElement(featured) {
-        const featuredElement = document.createElement('div');
-        featuredElement.className = 'themeix-featured-content';
-
-        if (featured.image) {
-            const image = document.createElement('img');
-            image.src = featured.image;
-            image.alt = featured.title || 'Featured content';
-            image.className = 'themeix-featured-image';
-            featuredElement.appendChild(image);
-        }
-
-        const content = document.createElement('div');
-        content.className = 'themeix-featured-content-inner';
-
-        if (featured.title) {
-            const title = document.createElement('h4');
-            title.className = 'themeix-featured-title';
-            title.textContent = featured.title;
-            content.appendChild(title);
-        }
-
-        if (featured.description) {
-            const description = document.createElement('p');
-            description.className = 'themeix-featured-description';
-            description.textContent = featured.description;
-            content.appendChild(description);
-        }
-
-        if (featured.button) {
-            const button = document.createElement('a');
-            button.href = featured.button.url;
-            button.className = 'themeix-featured-button themeix-button';
-            button.textContent = featured.button.text;
-            content.appendChild(button);
-        }
-
-        featuredElement.appendChild(content);
-        return featuredElement;
     }
 
     function openDropdown(item) {
@@ -980,11 +938,6 @@ const ThemeixMenu = (function() {
             menuItem.groups = processGroups(menuItem.children, jsonConfig.groups, jsonConfig.useGhostChildren !== false);
         }
 
-        // Add featured content
-        if (jsonConfig.featured) {
-            menuItem.featured = jsonConfig.featured;
-        }
-
         console.log('Applied JSON config to:', menuItem.title, 'Type:', menuItem.type);
     }
 
@@ -1071,14 +1024,13 @@ const ThemeixMenu = (function() {
                 url: menuConfig.url || '#',
                 type: menuConfig.type || 'link',
                 children: [],
-                element: null,  // No Ghost element - will create new DOM elements
+                element: null,
                 hasChildren: false,
                 settings: menuConfig.settings || {},
                 icon: menuConfig.icon || null,
                 badge: menuConfig.badge || null,
                 description: menuConfig.description || null,
-                groups: [],
-                featured: menuConfig.featured || null
+                groups: []
             };
 
             // Process groups if available

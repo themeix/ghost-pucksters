@@ -328,83 +328,39 @@
     font-size: 0.9375rem;
     font-weight: 400;
 }
- 
-.themeix-featured-content {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    padding: 1.5rem;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-radius: var(--tdgm-submenu-border-radius);
-    margin-top: 1rem;
-    color: #ffffff;
-    height: 100%;
-    box-sizing: border-box;
-}
-
-.themeix-featured-image {
-    width: 100%;
-    height: auto;
-    max-height: 150px;
-    object-fit: cover;
-    border-radius: 6px;
-}
-
-.themeix-featured-content-inner {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
-
-.themeix-featured-title {
-    font-size: 1.125rem;
-    font-weight: 600;
-    margin: 0 0 0.5rem 0;
-    color: #ffffff;
-}
-
-.themeix-featured-description {
-    font-size: 0.9375rem;
-    margin: 0 0 1rem 0;
-    opacity: 0.9;
-    line-height: 1.5;
-}
-
-.themeix-featured-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.75rem 1.5rem;
-    background-color: #ffffff;
-    color: #764ba2;
-    text-decoration: none;
-    border-radius: 6px;
-    font-weight: 600;
-    transition: background-color 0.3s ease;
-    align-self: flex-start;
-    text-align: center;
-}
-
-.themeix-featured-button:hover {
-    background-color: #f8f9fa;
-}
 
 .themeix-button {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     padding: 0.75rem 1.5rem;
-    background-color: var(--tdgm-menu-active-color);
+    background-color: var(--menu-active-color);
     color: #ffffff;
     text-decoration: none;
-    border-radius: var(--tdgm-submenu-border-radius);
+    border-radius: var(--submenu-border-radius);
     font-weight: 600;
     transition: background-color 0.3s ease;
 }
 
 .themeix-button:hover {
-    background-color: var(--tdgm-menu-hover-color);
+    background-color: var(--menu-hover-color);
+}
+  
+.themeix-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1.5rem;
+    background-color: var(--menu-active-color);
+    color: #ffffff;
+    text-decoration: none;
+    border-radius: var(--submenu-border-radius);
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+}
+
+.themeix-button:hover {
+    background-color: var(--menu-hover-color);
 }
 
 .themeix-menu-item.is-open > .themeix-menu-link {

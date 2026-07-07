@@ -107,11 +107,6 @@ function renderSubmenu(item, config = {}) {
         renderSimpleSubmenu(item.children, submenu);
     }
 
-    if (item.featured) {
-        const featured = renderFeaturedContent(item.featured);
-        submenu.appendChild(featured);
-    }
-
     return submenu;
 }
 
@@ -157,47 +152,6 @@ function renderMegaGroup(group) {
 
     groupElement.appendChild(groupLinks);
     return groupElement;
-}
-
-function renderFeaturedContent(featured) {
-    const featuredElement = document.createElement('div');
-    featuredElement.className = 'themeix-featured-content';
-
-    if (featured.image) {
-        const image = document.createElement('img');
-        image.src = featured.image;
-        image.alt = featured.title || 'Featured content';
-        image.className = 'themeix-featured-image';
-        featuredElement.appendChild(image);
-    }
-
-    const content = document.createElement('div');
-    content.className = 'themeix-featured-content-inner';
-
-    if (featured.title) {
-        const title = document.createElement('h4');
-        title.className = 'themeix-featured-title';
-        title.textContent = featured.title;
-        content.appendChild(title);
-    }
-
-    if (featured.description) {
-        const description = document.createElement('p');
-        description.className = 'themeix-featured-description';
-        description.textContent = featured.description;
-        content.appendChild(description);
-    }
-
-    if (featured.button) {
-        const button = document.createElement('a');
-        button.href = featured.button.url;
-        button.className = 'themeix-featured-button themeix-button';
-        button.textContent = featured.button.text;
-        content.appendChild(button);
-    }
-
-    featuredElement.appendChild(content);
-    return featuredElement;
 }
 
 function renderMobileMenu(menuItems, container, config = {}) {

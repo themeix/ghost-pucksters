@@ -6,7 +6,7 @@
             background: white;
             border-radius: 8px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-            padding: ${a?"1.5rem":"0.5rem"} 0;
+            padding: ${a?"var(--tdgm-mega-padding)":"var(--tdgm-submenu-padding)"} ;
             list-style: none;
             margin: 0.5rem 0 0 0;
             opacity: 0;

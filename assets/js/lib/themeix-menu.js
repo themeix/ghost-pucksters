@@ -444,55 +444,6 @@ const ThemeixMenu = (function() {
 
         return ul;
     }
-            }
-
-            if (item.settings.alignment) {
-                ul.classList.add(`align-${item.settings.alignment}`);
-                
-                if (item.settings.alignment === 'center') {
-                    styles += `position: fixed;`;
-                    styles += `left: 50%;`;
-                    styles += `transform: translateX(-50%);`;
-                } else if (item.settings.alignment === 'right') {
-                    styles += `left: auto; right: 0;`;
-                } else if (isFullWidth) {
-                    styles += `left: 0; right: 0;`;
-                }
-            }
-
-            if (item.settings.columns) {
-                ul.style.setProperty('--menu-columns', item.settings.columns);
-            }
-
-            if (item.settings.animation) {
-                ul.dataset.animation = item.settings.animation;
-            }
-        }
-
-        ul.style.cssText = styles;
-
-        ul.addEventListener('mouseenter', () => {
-            if (ul.hoverTimeout) {
-                clearTimeout(ul.hoverTimeout);
-            }
-        });
-
-        ul.addEventListener('mouseleave', () => {
-            delayedCloseDropdown(item);
-        });
-
-        // Render content based on type
-        if (isMega && item.groups && item.groups.length > 0) {
-            createMegaMenuGroups(item.groups, null, item.settings, ul);
-        } else {
-            item.children.forEach(child => {
-                const li = createSubmenuItem(child);
-                ul.appendChild(li);
-            });
-        }
-
-        return ul;
-    }
 
     function createSubmenuItem(child) {
         const li = document.createElement('li');

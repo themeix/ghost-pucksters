@@ -537,10 +537,9 @@ body[class^="gh-font-heading"]:not(.gh-font-heading-fira-sans):not(.gh-font-head
     .gh-navigation-brand .gh-search {
         display: none;
     }
-
-    .gh-navigation:not(.is-dropdown-loaded) .gh-navigation-menu .nav > li {
-        opacity: 0;
-    }
+.gh-navigation-menu.themeix-menu-initialized:not(.is-dropdown-loaded) {
+    opacity: 0;
+}
 }
 
 /* 6.1. Navigation styles */

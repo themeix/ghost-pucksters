@@ -73,6 +73,34 @@
 
 {{!-- Scripts - handle responsive videos, infinite scroll, and navigation dropdowns --}}
 <script src="{{asset "built/source.js"}}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOM Content Loaded - ThemeixMenu test');
+        console.log('ThemeixMenu type:', typeof ThemeixMenu);
+        
+        if (typeof ThemeixMenu === 'function' || typeof ThemeixMenu === 'object') {
+            console.log('ThemeixMenu found, attempting initialization...');
+            
+            try {
+                ThemeixMenu.init({
+                    selector: '#themeix-main-menu',
+                    mobileBreakpoint: 768,
+                    animationDuration: 300,
+                    closeOnClickOutside: true,
+                    closeOnEscape: true,
+                    keyboardNavigation: true,
+                    mouseDelay: 150
+                });
+                console.log('ThemeixMenu.init() called successfully');
+            } catch (error) {
+                console.error('Error initializing ThemeixMenu:', error);
+            }
+        } else {
+            console.warn('ThemeixMenu not found - it may not be built into the theme yet');
+            console.log('Available global objects:', Object.keys(window).filter(k => k.toLowerCase().includes('menu')).join(', '));
+        }
+    });
+</script>
 
 {{!-- Ghost outputs required functional scripts with this tag, it should always be the last thing before the closing body tag --}}
 {{ghost_foot}}

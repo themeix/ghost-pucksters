@@ -1,0 +1,149 @@
+{
+  "version": 1,
+  "globalSettings": {
+    "animationDuration": 300,
+    "mouseDelay": 150,
+    "closeOnClickOutside": true,
+    "closeOnEscape": true,
+    "keyboardNavigation": true
+  },
+  "menus": [
+    {
+      "match": {
+        "url": "/courses/"
+      },
+      "type": "mega",
+      "settings": {
+        "columns": 3,
+        "width": "1200px",
+        "alignment": "center",
+        "animation": "fade"
+      },
+      "groups": [
+        {
+          "title": "Learning Paths",
+          "links": [
+            {
+              "title": "All Courses",
+              "icon": "book"
+            },
+            {
+              "title": "Business",
+              "badge": "Popular"
+            },
+            {
+              "title": "Marketing",
+              "icon": "megaphone"
+            },
+            {
+              "title": "Design",
+              "icon": "palette"
+            }
+          ]
+        },
+        {
+          "title": "Skill Levels",
+          "links": [
+            {
+              "title": "Beginner"
+            },
+            {
+              "title": "Intermediate"
+            },
+            {
+              "title": "Advanced"
+            },
+            {
+              "title": "Expert"
+            }
+          ]
+        },
+        {
+          "title": "Resources",
+          "links": [
+            {
+              "title": "Tutorials"
+            },
+            {
+              "title": "Documentation"
+            },
+            {
+              "title": "Community"
+            },
+            {
+              "title": "Support"
+            }
+          ]
+        }
+      ],
+      "featured": {
+        "title": "Start Learning Today",
+        "description": "Browse our latest premium courses and improve your skills.",
+        "image": "/content/images/featured-course.webp",
+        "button": {
+          "text": "Explore Courses",
+          "url": "/courses/"
+        }
+      }
+    },
+    {
+      "match": {
+        "url": "/blog/"
+      },
+      "type": "mega",
+      "settings": {
+        "columns": 2,
+        "width": "900px",
+        "alignment": "left",
+        "animation": "slide"
+      },
+      "groups": [
+        {
+          "title": "Categories",
+          "links": [
+            {
+              "title": "Technology",
+              "badge": "New"
+            },
+            {
+              "title": "Business"
+            },
+            {
+              "title": "Lifestyle"
+            },
+            {
+              "title": "Travel"
+            }
+          ]
+        },
+        {
+          "title": "Latest Posts",
+          "links": [
+            {
+              "title": "Getting Started Guide"
+            },
+            {
+              "title": "Best Practices"
+            },
+            {
+              "title": "Case Studies"
+            },
+            {
+              "title": "Interviews"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "match": {
+        "url": "/about/"
+      },
+      "type": "dropdown",
+      "settings": {
+        "animation": "fade"
+      },
+      "icon": "info-circle"
+    }
+  ]
+}

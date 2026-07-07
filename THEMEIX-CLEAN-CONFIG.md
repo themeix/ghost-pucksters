@@ -1,0 +1,101 @@
+<script>
+window.themeixMenuConfig = {
+  "version": 1,
+  "menus": [
+    {
+      "match": {
+        "url": "/courses/"
+      },
+      "type": "mega",
+      "settings": {
+        "columns": 3,
+        "width": "900px",
+        "alignment": "center",
+        "animation": "fade"
+      },
+      "groups": [
+        {
+          "title": "Heading 1",
+          "links": [
+            {
+              "title": "Item 1",
+               "url": "#test",
+              "icon": {
+                "sprite": "https://www.fanatics.com/static/1.1.0-rc-20260701.175254/assets/083577d92faa375dc634.png",
+                "x": "0px",
+                "y": "0px",
+                "width": "20px",
+                "height": "20px"
+              }
+            },
+            {
+              "title": "Item 2",
+               "url": "/business",
+              "badge": "Popular",
+                "icon": {
+    "image": " https://storage.ghost.io/c/e9/02/e902e032-ca34-48cd-974f-bd633686a95b/content/images/2026/07/AHL.webp",
+    "width": "20px",
+    "height": "20px",
+    "alt": "Business icon"
+}
+            },
+
+
+           
+            {
+              "title": "Item 3",
+               "url": "/mar/",
+              "icon": "megaphone"
+            },
+            {
+              "title": "Item 4",
+               "url": "/desi",
+              "icon": "palette"
+            }
+          ]
+        },
+        {
+  "title": "Heading 2", 
+  "links": [
+    {
+      "title": "Item 5",
+      "url": "/courses/beginner/",
+      "icon": "star"
+    },
+    {
+      "title": "Item 6", 
+      "url": "/courses/intermediate/",
+      "icon": "star"
+    },
+    {
+      "title": "Item 7",
+      "url": "/courses/advanced/", 
+      "icon": "star"
+    }
+  ]
+},
+ {
+  "title": "Heading 3", 
+  "links": [
+    {
+      "title": "Item 8",
+      "url": "/courses/beginner/",
+      "icon": "star"
+    },
+    {
+      "title": "Item 9", 
+      "url": "/courses/intermediate/",
+      "icon": "star"
+    },
+    {
+      "title": "Item 10",
+      "url": "/courses/advanced/", 
+      "icon": "star"
+    }
+  ]
+}
+] 
+    }
+  ]
+};
+</script>

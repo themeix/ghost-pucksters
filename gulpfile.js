@@ -55,6 +55,12 @@ function css(done) {
         dest('assets/built/', {sourcemaps: '.'}),
         livereload()
     ], handleError(done));
+
+    // Also copy themeix-menu.css separately since it's not imported
+    pump([
+        src('assets/css/themeix-menu.css'),
+        dest('assets/built/')
+    ], () => {});
 }
 
 function js(done) {

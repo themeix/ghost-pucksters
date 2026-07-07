@@ -257,16 +257,7 @@ const ThemeixMenu = (function() {
                     border-radius: 4px;
                     margin-left: 0.5rem;
                 `;
-                link.appendChild(badge);
-            }
-
-            // Only add dropdown arrow if item has children
-            if (item.hasChildren || item.children.length > 0) {
-                const arrow = document.createElement('span');
-                arrow.className = 'menu-arrow';
-                arrow.innerHTML = '▼';
-                arrow.style.cssText = 'font-size: 0.7em; transition: transform 0.3s ease; pointer-events: none;';
-                link.appendChild(arrow);
+            link.appendChild(badge);
             }
 
             link.addEventListener('click', (e) => {
@@ -651,15 +642,6 @@ const ThemeixMenu = (function() {
             description.className = 'themeix-menu-description';
             description.textContent = item.description;
             link.appendChild(description);
-        }
-
-        // Only add dropdown arrow if item has children
-        if (item.hasChildren || item.children.length > 0) {
-            const arrow = document.createElement('span');
-            arrow.className = 'menu-arrow';
-            arrow.innerHTML = '▼';
-            arrow.style.cssText = 'font-size: 0.7em; transition: transform 0.3s ease; pointer-events: none;';
-            link.appendChild(arrow);
         }
 
         li.appendChild(link);

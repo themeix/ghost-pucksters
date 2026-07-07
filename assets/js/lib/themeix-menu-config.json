@@ -7,143 +7,120 @@
     "closeOnEscape": true,
     "keyboardNavigation": true
   },
-  "menus": [
+   "menus": [
     {
       "match": {
         "url": "/courses/"
       },
       "type": "mega",
       "settings": {
-        "columns": 3,
-        "width": "1200px",
+        "columns": 4,
+        "width": "900px",
         "alignment": "center",
         "animation": "fade"
       },
       "groups": [
         {
-          "title": "Learning Paths",
+          "title": "Heading 1",
           "links": [
             {
-              "title": "All Courses",
-              "icon": "book"
+              "title": "Item 1",
+               "url": "#test",
+              "icon": {
+                "sprite": "https://www.fanatics.com/static/1.1.0-rc-20260701.175254/assets/083577d92faa375dc634.png",
+                "x": "0px",
+                "y": "0px",
+                "width": "20px",
+                "height": "20px"
+              }
             },
             {
-              "title": "Business",
-              "badge": "Popular"
+              "title": "Item 2",
+               "url": "/business",
+              "badge": "Popular",
+                "icon": {
+    "image": " https://storage.ghost.io/c/e9/02/e902e032-ca34-48cd-974f-bd633686a95b/content/images/2026/07/AHL.webp",
+    "width": "20px",
+    "height": "20px",
+    "alt": "Business icon"
+}
             },
+
+
+           
             {
-              "title": "Marketing",
+              "title": "Item 3",
+               "url": "/mar/",
               "icon": "megaphone"
             },
             {
-              "title": "Design",
+              "title": "Item 4",
+               "url": "/desi",
               "icon": "palette"
             }
           ]
         },
         {
-          "title": "Skill Levels",
-          "links": [
-            {
-              "title": "Beginner"
-            },
-            {
-              "title": "Intermediate"
-            },
-            {
-              "title": "Advanced"
-            },
-            {
-              "title": "Expert"
-            }
-          ]
-        },
-        {
-          "title": "Resources",
-          "links": [
-            {
-              "title": "Tutorials"
-            },
-            {
-              "title": "Documentation"
-            },
-            {
-              "title": "Community"
-            },
-            {
-              "title": "Support"
-            }
-          ]
-        }
-      ],
-      "featured": {
-        "title": "Start Learning Today",
-        "description": "Browse our latest premium courses and improve your skills.",
-        "image": "/content/images/featured-course.webp",
-        "button": {
-          "text": "Explore Courses",
-          "url": "/courses/"
-        }
-      }
+  "title": "Heading 2", 
+  "links": [
+    {
+      "title": "Item 5",
+      "url": "/courses/beginner/",
+      "icon": "star"
     },
     {
-      "match": {
-        "url": "/blog/"
-      },
-      "type": "mega",
-      "settings": {
-        "columns": 2,
-        "width": "900px",
-        "alignment": "left",
-        "animation": "slide"
-      },
-      "groups": [
-        {
-          "title": "Categories",
-          "links": [
-            {
-              "title": "Technology",
-              "badge": "New"
-            },
-            {
-              "title": "Business"
-            },
-            {
-              "title": "Lifestyle"
-            },
-            {
-              "title": "Travel"
-            }
-          ]
-        },
-        {
-          "title": "Latest Posts",
-          "links": [
-            {
-              "title": "Getting Started Guide"
-            },
-            {
-              "title": "Best Practices"
-            },
-            {
-              "title": "Case Studies"
-            },
-            {
-              "title": "Interviews"
-            }
-          ]
-        }
-      ]
+      "title": "Item 6", 
+      "url": "/courses/intermediate/",
+      "icon": "star"
     },
     {
-      "match": {
-        "url": "/about/"
-      },
-      "type": "dropdown",
-      "settings": {
-        "animation": "fade"
-      },
-      "icon": "info-circle"
+      "title": "Item 7",
+      "url": "/courses/advanced/", 
+      "icon": "star"
+    }
+  ]
+},
+ {
+  "title": "Heading 3", 
+  "links": [
+    {
+      "title": "Item 8",
+      "url": "/courses/beginner/",
+      "icon": "star"
+    },
+    {
+      "title": "Item 9", 
+      "url": "/courses/intermediate/",
+      "icon": "star"
+    },
+    {
+      "title": "Item 10",
+      "url": "/courses/advanced/", 
+      "icon": "star"
+    }
+  ]
+},
+ {
+  "title": "Heading 3", 
+  "links": [
+    {
+      "title": "Item 8",
+      "url": "/courses/beginner/",
+      "icon": "star"
+    },
+    {
+      "title": "Item 9", 
+      "url": "/courses/intermediate/",
+      "icon": "star"
+    },
+    {
+      "title": "Item 10",
+      "url": "/courses/advanced/", 
+      "icon": "star"
+    }
+  ]
+}
+] 
     }
   ]
 }

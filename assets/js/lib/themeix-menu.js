@@ -246,27 +246,7 @@ const ThemeixMenu = (function() {
                 const badge = document.createElement('span');
                 badge.className = 'themeix-menu-badge';
                 badge.textContent = item.badge;
-                badge.style.cssText = `
-                    display: inline-flex;
-                    align-items: center;
-                    padding: 0.25rem 0.5rem;
-                    background: #ff6b6b;
-                    color: white;
-                    font-size: 0.75rem;
-                    font-weight: 600;
-                    border-radius: 4px;
-                    margin-left: 0.5rem;
-                `;
                 link.appendChild(badge);
-            }
-
-            // Only add dropdown arrow if item has children
-            if (item.hasChildren || item.children.length > 0) {
-                const arrow = document.createElement('span');
-                arrow.className = 'menu-arrow';
-                arrow.innerHTML = '▼';
-                arrow.style.cssText = 'font-size: 0.7em; transition: transform 0.3s ease; pointer-events: none;';
-                link.appendChild(arrow);
             }
 
             link.addEventListener('click', (e) => {
@@ -325,25 +305,22 @@ const ThemeixMenu = (function() {
             // Simple icon name (SVG icon)
             iconElement.className = `themeix-menu-icon ${iconConfig}`;
             iconElement.innerHTML = getIconSVG(iconConfig);
-            iconElement.style.cssText = 'display: inline-flex; align-items: center; justify-content: center;';
         } else if (iconConfig.sprite) {
             // Sprite image icon
             iconElement.className = 'themeix-menu-icon themeix-sprite-icon';
-            iconElement.style.cssText = `
-                display: inline-block;
-                width: ${iconConfig.width || '20px'};
-                height: ${iconConfig.height || '20px'};
-                background-image: url('${iconConfig.sprite}');
-                background-position: ${iconConfig.x || '0px'} ${iconConfig.y || '0px'};
-                background-repeat: no-repeat;
-                background-size: ${iconConfig.spriteSize || 'auto'};
-                margin-right: 0.5rem;
-            `;
+            iconElement.style.width = iconConfig.width || '20px';
+            iconElement.style.height = iconConfig.height || '20px';
+            iconElement.style.backgroundImage = `url('${iconConfig.sprite}')`;
+            iconElement.style.backgroundPosition = `${iconConfig.x || '0px'} ${iconConfig.y || '0px'}`;
+            iconElement.style.backgroundSize = iconConfig.spriteSize || 'auto';
         } else if (iconConfig.image) {
             // Regular image icon
             iconElement.className = 'themeix-menu-icon themeix-image-icon';
-            iconElement.innerHTML = `<img src="${iconConfig.image}" alt="${iconConfig.alt || ''}" style="width: ${iconConfig.width || '16px'}; height: ${iconConfig.height || '16px'}; display: block;">`;
-            iconElement.style.cssText = 'display: inline-flex; align-items: center; margin-right: 0.5rem;';
+            const iconWidth = iconConfig.width || '16px';
+            const iconHeight = iconConfig.height || '16px';
+            iconElement.style.width = iconWidth;
+            iconElement.style.height = iconHeight;
+            iconElement.innerHTML = `<img src="${iconConfig.image}" alt="${iconConfig.alt || ''}">`;
         }
         
         return iconElement;
@@ -358,34 +335,12 @@ const ThemeixMenu = (function() {
         ul.dataset.menuId = item.id;
         ul.setAttribute('aria-label', `${item.title} submenu`);
 
-        // Apply settings
-        if (item.settings) {
-            if (item.settings.width) {
-                ul.style.width = item.settings.width;
-            }
+        // Check if full width or custom width mega menu
+        const isFullWidth = item.settings && (item.settings.width === '100vw' || item.settings.width === '100%');
+        const hasCustomWidth = item.settings && item.settings.width;
 
-            if (item.settings.alignment) {
-                ul.classList.add(`align-${item.settings.alignment}`);
-                if (item.settings.alignment === 'center') {
-                    ul.style.left = '50%';
-                    ul.style.transform = 'translateX(-50%)';
-                } else if (item.settings.alignment === 'right') {
-                    ul.style.left = 'auto';
-                    ul.style.right = '0';
-                }
-            }
-
-            if (item.settings.columns) {
-                ul.style.setProperty('--menu-columns', item.settings.columns);
-            }
-
-            if (item.settings.animation) {
-                ul.dataset.animation = item.settings.animation;
-            }
-        }
-
-        // Default styles
-        ul.style.cssText = `
+        // Build base styles
+        let styles = `
             position: absolute;
             top: 100%;
             left: 0;
@@ -402,6 +357,39 @@ const ThemeixMenu = (function() {
             transition: all 0.3s ease;
             z-index: 1000;
         `;
+
+        // Apply settings
+        if (item.settings) {
+            if (item.settings.width) {
+                styles += `width: ${item.settings.width};`;
+                if (isFullWidth) {
+                    styles += `max-width: ${item.settings.width};`;
+                }
+            }
+
+            if (item.settings.alignment) {
+                ul.classList.add(`align-${item.settings.alignment}`);
+                if (item.settings.alignment === 'center' && !isFullWidth && !hasCustomWidth) {
+                    styles += 'left: 50%; transform: translateX(-50%) translateY(-10px);';
+                } else if (item.settings.alignment === 'center' && hasCustomWidth) {
+                    styles += 'left: 50%; transform: translateX(-50%) translateY(-10px);';
+                } else if (item.settings.alignment === 'right') {
+                    styles += 'left: auto; right: 0;';
+                } else if (isFullWidth) {
+                    styles += 'left: 0; right: 0; transform: translateY(-10px);';
+                }
+            }
+
+            if (item.settings.columns) {
+                ul.style.setProperty('--menu-columns', item.settings.columns);
+            }
+
+            if (item.settings.animation) {
+                ul.dataset.animation = item.settings.animation;
+            }
+        }
+
+        ul.style.cssText = styles;
 
         ul.addEventListener('mouseenter', () => {
             if (ul.hoverTimeout) {
@@ -429,7 +417,6 @@ const ThemeixMenu = (function() {
     function createSubmenuItem(child) {
         const li = document.createElement('li');
         li.className = 'themeix-submenu-item';
-        li.style.cssText = 'margin: 0; padding: 0;';
 
         const a = document.createElement('a');
         a.href = child.url;
@@ -453,37 +440,8 @@ const ThemeixMenu = (function() {
             const badge = document.createElement('span');
             badge.className = 'themeix-submenu-badge';
             badge.textContent = child.badge;
-            badge.style.cssText = `
-                display: inline-flex;
-                align-items: center;
-                padding: 0.15rem 0.4rem;
-                background: #ff6b6b;
-                color: white;
-                font-size: 0.7rem;
-                font-weight: 600;
-                border-radius: 3px;
-                margin-left: 0.5rem;
-            `;
             a.appendChild(badge);
         }
-
-        a.style.cssText = `
-            display: flex;
-            align-items: center;
-            padding: 0.6rem 1rem;
-            color: #333;
-            text-decoration: none;
-            transition: background 0.2s ease;
-            white-space: nowrap;
-        `;
-
-        a.addEventListener('mouseenter', () => {
-            a.style.background = '#f8f9fa';
-        });
-
-        a.addEventListener('mouseleave', () => {
-            a.style.background = 'transparent';
-        });
 
         li.appendChild(a);
         return li;
@@ -492,13 +450,6 @@ const ThemeixMenu = (function() {
     function createMegaMenuGroups(groups, featuredContent, settings, container) {
         const groupsContainer = document.createElement('div');
         groupsContainer.className = 'themeix-mega-groups';
-        groupsContainer.style.cssText = `
-            display: flex;
-            flex-wrap: wrap;
-            gap: 2rem;
-            padding: 0 1rem;
-            width: 100%;
-        `;
 
         let columnCount = parseInt(settings.columns) || 3;
         
@@ -528,31 +479,19 @@ const ThemeixMenu = (function() {
     function createMegaGroup(group, columnWidth) {
         const groupElement = document.createElement('div');
         groupElement.className = 'themeix-mega-group';
-        
-        groupElement.style.cssText = `
-            flex: 0 0 calc(${columnWidth}% - 1.5rem);
-            min-width: 150px;
-            max-width: calc(${columnWidth}% - 1.5rem);
-        `;
+        groupElement.style.flex = `0 0 calc(${columnWidth}% - 1.5rem)`;
+        groupElement.style.minWidth = '150px';
+        groupElement.style.maxWidth = `calc(${columnWidth}% - 1.5rem)`;
 
         if (group.title) {
             const groupTitle = document.createElement('h3');
             groupTitle.className = 'themeix-mega-group-title';
             groupTitle.textContent = group.title;
-            groupTitle.style.cssText = `
-                font-size: 1rem;
-                font-weight: 600;
-                margin: 0 0 0.75rem 0;
-                color: #000;
-                padding-bottom: 0.5rem;
-                border-bottom: 2px solid #e5e5e5;
-            `;
             groupElement.appendChild(groupTitle);
         }
 
         const groupLinks = document.createElement('ul');
         groupLinks.className = 'themeix-mega-group-links';
-        groupLinks.style.cssText = 'list-style: none; margin: 0; padding: 0;';
 
         if (group.links) {
             group.links.forEach(link => {
@@ -568,12 +507,9 @@ const ThemeixMenu = (function() {
     function createFeaturedColumn(featured, columnWidth) {
         const featuredColumn = document.createElement('div');
         featuredColumn.className = 'themeix-mega-group themeix-featured-column';
-        
-        featuredColumn.style.cssText = `
-            flex: 0 0 calc(${columnWidth}% - 1.5rem);
-            min-width: 150px;
-            max-width: calc(${columnWidth}% - 1.5rem);
-        `;
+        featuredColumn.style.flex = `0 0 calc(${columnWidth}% - 1.5rem)`;
+        featuredColumn.style.minWidth = '150px';
+        featuredColumn.style.maxWidth = `calc(${columnWidth}% - 1.5rem)`;
 
         const featuredElement = createFeaturedElement(featured);
         featuredColumn.appendChild(featuredElement);
@@ -632,17 +568,6 @@ const ThemeixMenu = (function() {
             const badge = document.createElement('span');
             badge.className = 'themeix-menu-badge';
             badge.textContent = item.badge;
-            badge.style.cssText = `
-                display: inline-flex;
-                align-items: center;
-                padding: 0.25rem 0.5rem;
-                background: #ff6b6b;
-                color: white;
-                font-size: 0.75rem;
-                font-weight: 600;
-                border-radius: 4px;
-                margin-left: 0.5rem;
-            `;
             link.appendChild(badge);
         }
 
@@ -651,15 +576,6 @@ const ThemeixMenu = (function() {
             description.className = 'themeix-menu-description';
             description.textContent = item.description;
             link.appendChild(description);
-        }
-
-        // Only add dropdown arrow if item has children
-        if (item.hasChildren || item.children.length > 0) {
-            const arrow = document.createElement('span');
-            arrow.className = 'menu-arrow';
-            arrow.innerHTML = '▼';
-            arrow.style.cssText = 'font-size: 0.7em; transition: transform 0.3s ease; pointer-events: none;';
-            link.appendChild(arrow);
         }
 
         li.appendChild(link);
@@ -678,47 +594,22 @@ const ThemeixMenu = (function() {
     function createFeaturedElement(featured) {
         const featuredElement = document.createElement('div');
         featuredElement.className = 'themeix-featured-content';
-        featuredElement.style.cssText = `
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            padding: 1.5rem;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 8px;
-            color: #ffffff;
-            height: 100%;
-            box-sizing: border-box;
-        `;
 
         if (featured.image) {
             const image = document.createElement('img');
             image.src = featured.image;
             image.alt = featured.title || 'Featured content';
             image.className = 'themeix-featured-image';
-            image.style.cssText = `
-                width: 100%;
-                height: auto;
-                max-height: 150px;
-                object-fit: cover;
-                border-radius: 6px;
-            `;
             featuredElement.appendChild(image);
         }
 
         const content = document.createElement('div');
         content.className = 'themeix-featured-content-inner';
-        content.style.cssText = 'display: flex; flex-direction: column; flex: 1; justify-content: center;';
 
         if (featured.title) {
             const title = document.createElement('h4');
             title.className = 'themeix-featured-title';
             title.textContent = featured.title;
-            title.style.cssText = `
-                font-size: 1.125rem;
-                font-weight: 600;
-                margin: 0 0 0.5rem 0;
-                color: #ffffff;
-            `;
             content.appendChild(title);
         }
 
@@ -726,12 +617,6 @@ const ThemeixMenu = (function() {
             const description = document.createElement('p');
             description.className = 'themeix-featured-description';
             description.textContent = featured.description;
-            description.style.cssText = `
-                font-size: 0.9375rem;
-                margin: 0 0 1rem 0;
-                opacity: 0.9;
-                line-height: 1.5;
-            `;
             content.appendChild(description);
         }
 
@@ -740,26 +625,6 @@ const ThemeixMenu = (function() {
             button.href = featured.button.url;
             button.className = 'themeix-featured-button themeix-button';
             button.textContent = featured.button.text;
-            button.style.cssText = `
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
-                padding: 0.75rem 1.5rem;
-                background-color: #ffffff;
-                color: #764ba2;
-                text-decoration: none;
-                border-radius: 6px;
-                font-weight: 600;
-                transition: background-color 0.3s ease;
-                align-self: flex-start;
-                text-align: center;
-            `;
-            button.addEventListener('mouseenter', () => {
-                button.style.backgroundColor = '#f8f9fa';
-            });
-            button.addEventListener('mouseleave', () => {
-                button.style.backgroundColor = '#ffffff';
-            });
             content.appendChild(button);
         }
 
@@ -786,7 +651,14 @@ const ThemeixMenu = (function() {
         
         submenu.style.opacity = '1';
         submenu.style.visibility = 'visible';
-        submenu.style.transform = 'translateY(0)';
+        
+        // Preserve horizontal transform if it exists
+        const currentTransform = submenu.style.transform || '';
+        if (currentTransform.includes('translateX')) {
+            submenu.style.transform = currentTransform.replace('translateY(-10px)', '').replace('translateY(0)', '');
+        } else {
+            submenu.style.transform = 'translateY(0)';
+        }
 
         adjustDropdownPosition(element);
     }
@@ -808,7 +680,14 @@ const ThemeixMenu = (function() {
         
         submenu.style.opacity = '0';
         submenu.style.visibility = 'hidden';
-        submenu.style.transform = 'translateY(-10px)';
+        
+        // Preserve horizontal transform if it exists
+        const currentTransform = submenu.style.transform || '';
+        if (currentTransform.includes('translateX')) {
+            submenu.style.transform = currentTransform.replace('translateY(0)', '') + ' translateY(-10px)';
+        } else {
+            submenu.style.transform = 'translateY(-10px)';
+        }
     }
 
     function toggleDropdown(item) {

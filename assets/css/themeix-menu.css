@@ -384,6 +384,7 @@
     text-decoration: none;
     transition: background 0.2s ease;
     white-space: nowrap;
+    gap: 4px;
 }
 
 .themeix-submenu-link:hover {

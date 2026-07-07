@@ -366,15 +366,15 @@ const ThemeixMenu = (function() {
             position: absolute;
             top: 100%;
             left: 0;
-            min-width: ${isMega ? '700px' : '200px'};
-            background: white;
+            min-width: ${isMega ? '700px' : 'auto'};
+            background: var(--tdgm-submenu-background);
             border-radius: 8px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.2);
             padding: ${isMega ? 'var(--tdgm-mega-padding)' : 'var(--tdgm-submenu-padding)'} ;
             list-style: none;
-            margin: 0.5rem 0 0 0;
+            margin:  ${isMega ? '-8px 0px 0px' : '12px 0px 0px'} ;
             opacity: 0;
-            visibility: hidden;
+            visibility: hidden; 
             z-index: 1000;
         `;
 
@@ -424,7 +424,7 @@ const ThemeixMenu = (function() {
 
         // Render content based on type
         if (isMega && item.groups && item.groups.length > 0) {
-            createMegaMenuGroups(item.groups, item.featured, item.settings, ul);
+            createMegaMenuGroups(item.groups, null, item.settings, ul);
         } else {
             item.children.forEach(child => {
                 const li = createSubmenuItem(child);
@@ -473,26 +473,17 @@ const ThemeixMenu = (function() {
         groupsContainer.className = 'themeix-mega-groups';
 
         let columnCount = parseInt(settings.columns) || 3;
+        const totalColumns = columnCount;
+        const actualColumnCount = Math.min(totalColumns, groups.length);
         
-        // If featured content exists, include it in column count
-        const totalColumns = featuredContent ? columnCount : columnCount;
-        const actualColumnCount = Math.min(totalColumns, groups.length + (featuredContent ? 1 : 0));
-        
-        // Calculate column width
         const columnWidth = 100 / actualColumnCount;
         
-        console.log('Column settings:', { columnCount, totalColumns, actualColumnCount, columnWidth, groupsCount: groups.length, hasFeatured: !!featuredContent });
+        console.log('Column settings:', { columnCount, totalColumns, actualColumnCount, columnWidth, groupsCount: groups.length });
 
         groups.forEach((group, index) => {
             const groupElement = createMegaGroup(group, columnWidth);
             groupsContainer.appendChild(groupElement);
         });
-
-        // Add featured content as a column if available
-        if (featuredContent) {
-            const featuredColumn = createFeaturedColumn(featuredContent, columnWidth);
-            groupsContainer.appendChild(featuredColumn);
-        }
 
         container.appendChild(groupsContainer);
     }
@@ -523,19 +514,6 @@ const ThemeixMenu = (function() {
 
         groupElement.appendChild(groupLinks);
         return groupElement;
-    }
-
-    function createFeaturedColumn(featured, columnWidth) {
-        const featuredColumn = document.createElement('div');
-        featuredColumn.className = 'themeix-mega-group themeix-featured-column';
-        featuredColumn.style.flex = `0 0 calc(${columnWidth}% - 1.5rem)`;
-        featuredColumn.style.minWidth = '150px';
-        featuredColumn.style.maxWidth = `calc(${columnWidth}% - 1.5rem)`;
-
-        const featuredElement = createFeaturedElement(featured);
-        featuredColumn.appendChild(featuredElement);
-        
-        return featuredColumn;
     }
 
     function createNewMenuItemElement(item) {

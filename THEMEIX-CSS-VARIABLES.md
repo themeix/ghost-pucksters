@@ -7,9 +7,9 @@ Complete guide to customizing your Themeix menu system using CSS variables.
 ### Main Menu Container
 ```css
 :root {
-    --menu-width: 100%;              /* Main menu container width */
-    --menu-gap: 2rem;                /* Gap between menu items */
-    --menu-radius: 8px;              /* Border radius for menu items */
+    --tdgm-menu-width: 100%;              /* Main menu container width */
+    --tdgm-menu-gap: 2rem;                /* Gap between menu items */
+    --tdgm-menu-radius: 8px;              /* Border radius for menu items */
     --menu-padding: 0.75rem 1rem;    /* Padding for menu links */
 }
 ```
@@ -17,10 +17,10 @@ Complete guide to customizing your Themeix menu system using CSS variables.
 ### Menu Links
 ```css
 :root {
-    --menu-color: #333333;           /* Default text color */
-    --menu-hover-color: #666666;     /* Hover text color */
-    --menu-active-color: #000000;    /* Active/focus text color */
-    --menu-background: #ffffff;      /* Background color */
+    --tdgm-menu-color: #333333;           /* Default text color */
+    --tdgm-menu-hover-color: #666666;     /* Hover text color */
+    --tdgm-menu-active-color: #000000;    /* Active/focus text color */
+    --tdgm-menu-background: #ffffff;      /* Background color */
     --menu-border: 1px solid #e5e5e5; /* Border styling */
     --menu-transition: all 0.3s ease; /* Animation transitions */
 }
@@ -39,18 +39,18 @@ Complete guide to customizing your Themeix menu system using CSS variables.
 ### Arrow Appearance
 ```css
 :root {
-    --arrow-size: 0.3em;             /* Arrow height (border-top) */
-    --arrow-width: 0.3em;            /* Arrow width (border-left/right) */
-    --arrow-color: currentColor;     /* Arrow color */
-    --arrow-hover-color: inherit;    /* Arrow hover color */
+    --tdgm-arrow-size: 0.3em;             /* Arrow height (border-top) */
+    --tdgm-arrow-width: 0.3em;            /* Arrow width (border-left/right) */
+    --tdgm-arrow-color: currentColor;     /* Arrow color */
+    --tdgm-arrow-hover-color: inherit;    /* Arrow hover color */
 }
 ```
 
 ### Arrow Animation
 ```css
 :root {
-    --arrow-transform: rotate(180deg); /* Arrow rotation on hover */
-    --arrow-transition: transform 0.3s ease; /* Arrow animation speed */
+    --tdgm-arrow-transform: rotate(180deg); /* Arrow rotation on hover */
+    --tdgm-arrow-transition: transform 0.3s ease; /* Arrow animation speed */
 }
 ```
 
@@ -59,22 +59,22 @@ Complete guide to customizing your Themeix menu system using CSS variables.
 **Larger Arrow:**
 ```css
 :root {
-    --arrow-size: 0.4em;
-    --arrow-width: 0.4em;
+    --tdgm-arrow-size: 0.4em;
+    --tdgm-arrow-width: 0.4em;
 }
 ```
 
 **No Arrow Rotation:**
 ```css
 :root {
-    --arrow-transform: rotate(0deg);
+    --tdgm-arrow-transform: rotate(0deg);
 }
 ```
 
 **Custom Arrow Color:**
 ```css
 :root {
-    --arrow-color: #ff6b6b;
+    --tdgm-arrow-color: #ff6b6b;
 }
 ```
 
@@ -83,21 +83,21 @@ Complete guide to customizing your Themeix menu system using CSS variables.
 ### Dropdown Submenus
 ```css
 :root {
-    --dropdown-width: 250px;         /* Width of dropdown menus */
-    --submenu-background: #ffffff;   /* Background color */
-    --submenu-shadow: 0 10px 40px rgba(0, 0, 0, 0.2); /* Shadow effect */
-    --submenu-border-radius: 8px;    /* Corner radius */
-    --submenu-padding: 1rem;         /* Internal padding */
-    --submenu-border: 1px solid #e5e5e5; /* Border styling */
+    --tdgm-dropdown-width: 250px;         /* Width of dropdown menus */
+    --tdgm-submenu-background: #ffffff;   /* Background color */
+    --tdgm-submenu-shadow: 0 10px 40px rgba(0, 0, 0, 0.2); /* Shadow effect */
+    --tdgm-submenu-border-radius: 8px;    /* Corner radius */
+    --tdgm-submenu-padding: 1rem;         /* Internal padding */
+    --tdgm-submenu-border: 1px solid #e5e5e5; /* Border styling */
 }
 ```
 
 ### Submenu Links
 ```css
 :root {
-    --submenu-hover-background: #f8f9fa; /* Hover background */
-    --submenu-link-padding: 0.5rem 0.75rem; /* Link padding */
-    --submenu-link-gap: 0.25rem;          /* Gap between link elements */
+    --tdgm-submenu-hover-background: #f8f9fa; /* Hover background */
+    --tdgm-submenu-link-padding: 0.5rem 0.75rem; /* Link padding */
+    --tdgm-submenu-link-gap: 0.25rem;          /* Gap between link elements */
 }
 ```
 
@@ -106,16 +106,16 @@ Complete guide to customizing your Themeix menu system using CSS variables.
 ### Mega Menu Container
 ```css
 :root {
-    --mega-width: 1200px;            /* Maximum width of mega menu */
+    --tdgm-mega-width: 1200px;            /* Maximum width of mega menu */
 }
 ```
 
 ### Mega Menu Gaps
 ```css
 :root {
-    --menu-gap-items: 0.5rem;        /* Gap between items in submenu */
-    --menu-gap-header: 1.5rem;       /* Gap above headers */
-    --menu-gap-group: 2rem;          /* Gap between groups/columns */
+    --tdgm-menu-gap-items: 0.5rem;        /* Gap between items in submenu */
+    --tdgm-menu-gap-header: 1.5rem;       /* Gap above headers */
+    --tdgm-menu-gap-group: 2rem;          /* Gap between groups/columns */
 }
 ```
 
@@ -123,19 +123,19 @@ Complete guide to customizing your Themeix menu system using CSS variables.
 
 ```css
 :root {
-    --badge-background: #ff6b6b;     /* Badge background color */
-    --badge-color: #ffffff;          /* Badge text color */
-    --badge-padding: 0.25rem 0.5rem; /* Badge padding */
-    --badge-radius: 4px;             /* Badge corner radius */
-    --badge-font-size: 0.75rem;      /* Badge font size */
+    --tdgm-badge-background: #ff6b6b;     /* Badge background color */
+    --tdgm-badge-color: #ffffff;          /* Badge text color */
+    --tdgm-badge-padding: 0.25rem 0.5rem; /* Badge padding */
+    --tdgm-badge-radius: 4px;             /* Badge corner radius */
+    --tdgm-badge-font-size: 0.75rem;      /* Badge font size */
 }
 ```
 
 **Custom Badge Example:**
 ```css
 :root {
-    --badge-background: #10b981;     /* Green badge */
-    --badge-color: #ffffff;
+    --tdgm-badge-background: #10b981;     /* Green badge */
+    --tdgm-badge-color: #ffffff;
 }
 ```
 
@@ -143,19 +143,19 @@ Complete guide to customizing your Themeix menu system using CSS variables.
 
 ```css
 :root {
-    --icon-size: 1.25rem;            /* Icon size */
-    --icon-gap: 0.5rem;              /* Gap between icon and text */
-    --icon-color: inherit;           /* Default icon color */
-    --icon-hover-color: inherit;     /* Icon hover color */
+    --tdgm-icon-size: 1.25rem;            /* Icon size */
+    --tdgm-icon-gap: 0.5rem;              /* Gap between icon and text */
+    --tdgm-icon-color: inherit;           /* Default icon color */
+    --tdgm-icon-hover-color: inherit;     /* Icon hover color */
 }
 ```
 
 **Custom Icon Example:**
 ```css
 :root {
-    --icon-size: 1.5rem;
-    --icon-color: #3b82f6;
-    --icon-gap: 0.75rem;
+    --tdgm-icon-size: 1.5rem;
+    --tdgm-icon-color: #3b82f6;
+    --tdgm-icon-gap: 0.75rem;
 }
 ```
 
@@ -163,10 +163,10 @@ Complete guide to customizing your Themeix menu system using CSS variables.
 
 ```css
 :root {
-    --mobile-menu-background: #ffffff;      /* Mobile menu background */
-    --mobile-menu-width: 300px;             /* Mobile menu width */
-    --mobile-menu-padding: 1rem;            /* Mobile menu padding */
-    --mobile-transition: all 0.3s ease;      /* Mobile animation speed */
+    --tdgm-mobile-menu-background: #ffffff;      /* Mobile menu background */
+    --tdgm-mobile-menu-width: 300px;             /* Mobile menu width */
+    --tdgm-mobile-menu-padding: 1rem;            /* Mobile menu padding */
+    --tdgm-mobile-transition: all 0.3s ease;      /* Mobile animation speed */
 }
 ```
 
@@ -175,28 +175,28 @@ Complete guide to customizing your Themeix menu system using CSS variables.
 ### Example 1: Dark Theme
 ```css
 :root {
-    --menu-background: #1a1a1a;
-    --menu-color: #ffffff;
-    --menu-hover-color: #f8f9fa;
-    --menu-active-color: #ffffff;
+    --tdgm-menu-background: #1a1a1a;
+    --tdgm-menu-color: #ffffff;
+    --tdgm-menu-hover-color: #f8f9fa;
+    --tdgm-menu-active-color: #ffffff;
     --menu-border: 1px solid #333;
-    --submenu-background: #1a1a1a;
-    --submenu-hover-background: #333;
-    --submenu-border: 1px solid #333;
-    --badge-background: #3b82f6;
-    --arrow-color: #ffffff;
+    --tdgm-submenu-background: #1a1a1a;
+    --tdgm-submenu-hover-background: #333;
+    --tdgm-submenu-border: 1px solid #333;
+    --tdgm-badge-background: #3b82f6;
+    --tdgm-arrow-color: #ffffff;
 }
 ```
 
 ### Example 2: Brand Colors
 ```css
 :root {
-    --menu-color: #1e40af;           /* Blue brand color */
-    --menu-hover-color: #3b82f6;     /* Lighter blue on hover */
-    --menu-active-color: #1e3a8a;    /* Darker blue when active */
-    --badge-background: #f59e0b;     /* Orange badges */
-    --arrow-color: #1e40af;
-    --menu-gap: 3rem;                /* More spacing */
+    --tdgm-menu-color: #1e40af;           /* Blue brand color */
+    --tdgm-menu-hover-color: #3b82f6;     /* Lighter blue on hover */
+    --tdgm-menu-active-color: #1e3a8a;    /* Darker blue when active */
+    --tdgm-badge-background: #f59e0b;     /* Orange badges */
+    --tdgm-arrow-color: #1e40af;
+    --tdgm-menu-gap: 3rem;                /* More spacing */
 }
 ```
 
@@ -204,14 +204,14 @@ Complete guide to customizing your Themeix menu system using CSS variables.
 ```css
 :root {
     --menu-padding: 0.5rem 0.75rem;
-    --menu-gap: 1.5rem;
-    --menu-radius: 0px;
+    --tdgm-menu-gap: 1.5rem;
+    --tdgm-menu-radius: 0px;
     --menu-border: none;
-    --submenu-border-radius: 0px;
-    --submenu-border: none;
-    --submenu-shadow: none;
-    --arrow-size: 0.25em;
-    --arrow-transform: rotate(0deg);  /* No rotation */
+    --tdgm-submenu-border-radius: 0px;
+    --tdgm-submenu-border: none;
+    --tdgm-submenu-shadow: none;
+    --tdgm-arrow-size: 0.25em;
+    --tdgm-arrow-transform: rotate(0deg);  /* No rotation */
 }
 ```
 
@@ -221,12 +221,12 @@ Complete guide to customizing your Themeix menu system using CSS variables.
     --menu-padding: 1rem 1.5rem;
     --menu-font-size: 1.125rem;
     --menu-font-weight: 600;
-    --menu-radius: 12px;
-    --dropdown-width: 300px;
-    --submenu-padding: 1.5rem;
-    --icon-size: 1.5rem;
-    --badge-font-size: 0.875rem;
-    --arrow-size: 0.35em;
+    --tdgm-menu-radius: 12px;
+    --tdgm-dropdown-width: 300px;
+    --tdgm-submenu-padding: 1.5rem;
+    --tdgm-icon-size: 1.5rem;
+    --tdgm-badge-font-size: 0.875rem;
+    --tdgm-arrow-size: 0.35em;
 }
 ```
 
@@ -241,7 +241,7 @@ Complete guide to customizing your Themeix menu system using CSS variables.
 
 /* Only dropdown links */
 .themeix-submenu .themeix-menu-link {
-    padding: var(--submenu-link-padding);
+    padding: var(--tdgm-submenu-link-padding);
 }
 
 /* Only mega menu links */
@@ -278,7 +278,7 @@ Complete guide to customizing your Themeix menu system using CSS variables.
 ### Custom CSS Shadows
 ```css
 :root {
-    --submenu-shadow: 
+    --tdgm-submenu-shadow: 
         0 4px 6px -1px rgba(0, 0, 0, 0.1),
         0 2px 4px -1px rgba(0, 0, 0, 0.06),
         0 10px 15px -3px rgba(0, 0, 0, 0.1);
@@ -288,9 +288,9 @@ Complete guide to customizing your Themeix menu system using CSS variables.
 ### Gradient Backgrounds
 ```css
 :root {
-    --menu-background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    --menu-color: #ffffff;
-    --arrow-color: #ffffff;
+    --tdgm-menu-background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --tdgm-menu-color: #ffffff;
+    --tdgm-arrow-color: #ffffff;
 }
 ```
 
@@ -303,7 +303,7 @@ Complete guide to customizing your Themeix menu system using CSS variables.
 
 [dir="rtl"] .themeix-menu-item.has-submenu > .themeix-menu-link::after {
     margin-left: 0;
-    margin-right: var(--menu-gap-items);
+    margin-right: var(--tdgm-menu-gap-items);
     transform: rotate(-90deg);
 }
 ```
@@ -323,12 +323,12 @@ Add this to your theme's custom CSS or Ghost Code Injection:
 ```css
 /* Custom Theme */
 :root {
-    --menu-color: #1e40af;
-    --menu-hover-color: #3b82f6;
-    --badge-background: #f59e0b;
-    --arrow-size: 0.35em;
-    --arrow-transform: rotate(180deg);
-    --dropdown-width: 280px;
+    --tdgm-menu-color: #1e40af;
+    --tdgm-menu-hover-color: #3b82f6;
+    --tdgm-badge-background: #f59e0b;
+    --tdgm-arrow-size: 0.35em;
+    --tdgm-arrow-transform: rotate(180deg);
+    --tdgm-dropdown-width: 280px;
 }
 ```
 

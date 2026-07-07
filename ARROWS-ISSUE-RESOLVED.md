@@ -86,29 +86,29 @@ For `.themeix-menu-item.has-submenu > .themeix-menu-link::after`:
 ### Bigger Arrows
 ```css
 :root {
-    --arrow-size: 0.4em;
-    --arrow-width: 0.4em;
+    --tdgm-arrow-size: 0.4em;
+    --tdgm-arrow-width: 0.4em;
 }
 ```
 
 ### Custom Color
 ```css
 :root {
-    --arrow-color: #1e40af;
+    --tdgm-arrow-color: #1e40af;
 }
 ```
 
 ### No Rotation
 ```css
 :root {
-    --arrow-transform: rotate(0deg);
+    --tdgm-arrow-transform: rotate(0deg);
 }
 ```
 
 ### Custom Animation Speed
 ```css
 :root {
-    --arrow-transition: transform 0.5s ease;
+    --tdgm-arrow-transition: transform 0.5s ease;
 }
 ```
 
@@ -176,18 +176,18 @@ See `THEMEIX-CSS-VARIABLES.md` for complete customization options.
 ```css
 :root {
     /* Arrow styling */
-    --arrow-size: 0.3em;
-    --arrow-width: 0.3em;
-    --arrow-color: currentColor;
-    --arrow-transform: rotate(180deg);
-    --arrow-transition: transform 0.3s ease;
+    --tdgm-arrow-size: 0.3em;
+    --tdgm-arrow-width: 0.3em;
+    --tdgm-arrow-color: currentColor;
+    --tdgm-arrow-transform: rotate(180deg);
+    --tdgm-arrow-transition: transform 0.3s ease;
 
     /* Spacing */
-    --menu-gap-items: 0.5rem;
+    --tdgm-menu-gap-items: 0.5rem;
 
     /* Colors */
-    --menu-color: #333333;
-    --menu-hover-color: #666666;
+    --tdgm-menu-color: #333333;
+    --tdgm-menu-hover-color: #666666;
 }
 ```
 

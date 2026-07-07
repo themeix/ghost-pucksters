@@ -288,20 +288,20 @@ The library uses CSS variables for easy customization:
 
 ```css
 :root {
-    --menu-width: 100%;
-    --mega-width: 1200px;
-    --dropdown-width: 250px;
-    --menu-gap: 2rem;
-    --menu-radius: 8px;
-    --menu-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-    --menu-background: #ffffff;
-    --menu-color: #333333;
-    --menu-hover-color: #666666;
-    --menu-active-color: #000000;
-    --badge-background: #ff6b6b;
-    --badge-color: #ffffff;
-    --submenu-background: #ffffff;
-    --submenu-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    --tdgm-menu-width: 100%;
+    --tdgm-mega-width: 1200px;
+    --tdgm-dropdown-width: 250px;
+    --tdgm-menu-gap: 2rem;
+    --tdgm-menu-radius: 8px;
+    --tdgm-menu-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    --tdgm-menu-background: #ffffff;
+    --tdgm-menu-color: #333333;
+    --tdgm-menu-hover-color: #666666;
+    --tdgm-menu-active-color: #000000;
+    --tdgm-badge-background: #ff6b6b;
+    --tdgm-badge-color: #ffffff;
+    --tdgm-submenu-background: #ffffff;
+    --tdgm-submenu-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
 }
 ```
 

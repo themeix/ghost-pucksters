@@ -27,13 +27,13 @@ The CSS arrow styles are now correctly in `assets/built/themeix-menu.css`:
 .themeix-menu-item.has-submenu > .themeix-menu-link::after {
     content: "";
     display: inline-block;
-    margin-left: var(--menu-gap-items);
+    margin-left: var(--tdgm-menu-gap-items);
     vertical-align: 0.255em;
-    border-top: var(--arrow-size) solid var(--arrow-color);
-    border-right: var(--arrow-width) solid transparent;
+    border-top: var(--tdgm-arrow-size) solid var(--tdgm-arrow-color);
+    border-right: var(--tdgm-arrow-width) solid transparent;
     border-bottom: 0;
-    border-left: var(--arrow-width) solid transparent;
-    transition: var(--arrow-transition);
+    border-left: var(--tdgm-arrow-width) solid transparent;
+    transition: var(--tdgm-arrow-transition);
 }
 ```
 
@@ -62,10 +62,10 @@ Add this to Ghost Code Injection (Site Header) or your custom CSS:
 
 ```css
 :root {
-    --arrow-size: 0.35em;              /* Bigger arrow */
-    --arrow-width: 0.35em;             /* Wider arrow */
-    --arrow-color: #1e40af;            /* Custom color */
-    --arrow-transform: rotate(180deg); /* Rotation */
+    --tdgm-arrow-size: 0.35em;              /* Bigger arrow */
+    --tdgm-arrow-width: 0.35em;             /* Wider arrow */
+    --tdgm-arrow-color: #1e40af;            /* Custom color */
+    --tdgm-arrow-transform: rotate(180deg); /* Rotation */
 }
 ```
 

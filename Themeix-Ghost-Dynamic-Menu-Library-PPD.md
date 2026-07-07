@@ -302,14 +302,14 @@ ThemeixMenu.close()
 # 14. CSS Variables
 
 ``` css
---menu-width
---mega-width
---dropdown-width
---menu-gap
---menu-radius
---menu-shadow
---menu-background
---menu-color
+--tdgm-menu-width
+--tdgm-mega-width
+--tdgm-dropdown-width
+--tdgm-menu-gap
+--tdgm-menu-radius
+--tdgm-menu-shadow
+--tdgm-menu-background
+--tdgm-menu-color
 --menu-animation
 ```
 

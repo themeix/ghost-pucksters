@@ -652,12 +652,31 @@ const ThemeixMenu = (function() {
         submenu.style.opacity = '1';
         submenu.style.visibility = 'visible';
         
-        // Preserve horizontal transform if it exists
-        const currentTransform = submenu.style.transform || '';
-        if (currentTransform.includes('translateX')) {
-            submenu.style.transform = currentTransform.replace('translateY(-10px)', '').replace('translateY(0)', '');
+        // Check if this is a fixed positioned mega menu
+        const isFixedPositioned = submenu.classList.contains('align-center') && 
+                                   submenu.classList.contains('themeix-submenu-mega');
+        
+        if (isFixedPositioned && window.getComputedStyle(submenu).position === 'fixed') {
+            // Calculate the correct top position for fixed positioning
+            const linkRect = link.getBoundingClientRect();
+            const topPosition = linkRect.bottom + 8; // Add 8px margin
+            submenu.style.top = `${topPosition}px`;
+            
+            // Preserve horizontal transform
+            const currentTransform = submenu.style.transform || '';
+            if (currentTransform.includes('translateX')) {
+                submenu.style.transform = currentTransform.replace('translateY(-10px)', '').replace('translateY(0)', '');
+            } else {
+                submenu.style.transform = 'translateY(0)';
+            }
         } else {
-            submenu.style.transform = 'translateY(0)';
+            // Preserve transform for absolute positioned menus
+            const currentTransform = submenu.style.transform || '';
+            if (currentTransform.includes('translateX')) {
+                submenu.style.transform = currentTransform.replace('translateY(-10px)', '').replace('translateY(0)', '');
+            } else {
+                submenu.style.transform = 'translateY(0)';
+            }
         }
 
         adjustDropdownPosition(element);
@@ -681,12 +700,29 @@ const ThemeixMenu = (function() {
         submenu.style.opacity = '0';
         submenu.style.visibility = 'hidden';
         
-        // Preserve horizontal transform if it exists
-        const currentTransform = submenu.style.transform || '';
-        if (currentTransform.includes('translateX')) {
-            submenu.style.transform = currentTransform.replace('translateY(0)', '') + ' translateY(-10px)';
+        // Check if this is a fixed positioned mega menu
+        const isFixedPositioned = submenu.classList.contains('align-center') && 
+                                   submenu.classList.contains('themeix-submenu-mega');
+        
+        if (isFixedPositioned && window.getComputedStyle(submenu).position === 'fixed') {
+            // Reset top position for next open
+            submenu.style.top = '100%';
+            
+            // Preserve horizontal transform
+            const currentTransform = submenu.style.transform || '';
+            if (currentTransform.includes('translateX')) {
+                submenu.style.transform = currentTransform.replace('translateY(0)', '') + ' translateY(-10px)';
+            } else {
+                submenu.style.transform = 'translateY(-10px)';
+            }
         } else {
-            submenu.style.transform = 'translateY(-10px)';
+            // Preserve transform for absolute positioned menus
+            const currentTransform = submenu.style.transform || '';
+            if (currentTransform.includes('translateX')) {
+                submenu.style.transform = currentTransform.replace('translateY(0)', '') + ' translateY(-10px)';
+            } else {
+                submenu.style.transform = 'translateY(-10px)';
+            }
         }
     }
 

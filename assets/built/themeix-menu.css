@@ -211,9 +211,30 @@
     box-sizing: border-box !important;
 }
 
-/* Custom width mega menu with center alignment */
-.themeix-submenu-mega[style*="px"].align-center {
+/* Custom width mega menu with center alignment - use fixed positioning for viewport centering */
+.themeix-submenu-mega.align-center {
+    position: fixed !important;
+    left: 50% !important;
     transform: translateX(-50%) translateY(-10px) !important;
+}
+
+/* Open state for centered mega menu */
+.themeix-submenu-mega.align-center.is-open {
+    transform: translateX(-50%) translateY(0) !important;
+}
+
+/* Prevent viewport overflow on small screens */
+@media (max-width: 1024px) {
+    .themeix-submenu-mega.align-center {
+        max-width: 95vw !important;
+        width: auto !important;
+        left: 50% !important;
+        transform: translateX(-50%) translateY(-10px) !important;
+    }
+
+    .themeix-submenu-mega.align-center.is-open {
+        transform: translateX(-50%) translateY(0) !important;
+    }
 }
 
 /* Override center alignment for full width menus */

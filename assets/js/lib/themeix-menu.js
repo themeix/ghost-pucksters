@@ -15,7 +15,13 @@ const ThemeixMenu = (function() {
         keyboardNavigation: true,
         mouseDelay: 150,
         childPrefix: '-',
-        jsonConfigPath: null
+        jsonConfigPath: null,
+        defaultMenuSettings: {
+            columns: 3,
+            width: '800px',
+            alignment: 'left',
+            animation: 'slide'
+        }
     };
 
     function init(userConfig = {}) {
@@ -357,34 +363,87 @@ const ThemeixMenu = (function() {
         ul.dataset.menuId = item.id;
         ul.setAttribute('aria-label', `${item.title} submenu`);
 
+        // Apply default settings if item.settings is missing
+        const settings = {
+            ...config.defaultMenuSettings,
+            ...item.settings
+        };
+
         // Check if full width or custom width mega menu
-        const isFullWidth = item.settings && (item.settings.width === '100vw' || item.settings.width === '100%');
-        const hasCustomWidth = item.settings && item.settings.width;
+        const isFullWidth = settings.width === '100vw' || settings.width === '100%';
+        const hasCustomWidth = settings.width;
 
         // Build base styles
         let styles = `
             position: absolute;
             top: 100%;
             left: 0;
-            min-width: ${isMega ? '700px' : 'auto'};
-            background: var(--tdgm-submenu-background);
+            min-width: ${isMega ? '700px' : '200px'};
+            background: white;
             border-radius: 8px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-            padding: ${isMega ? 'var(--tdgm-mega-padding)' : 'var(--tdgm-submenu-padding)'} ;
+            padding: ${isMega ? '1.5rem' : '0.5rem'} 0;
             list-style: none;
-            margin:  ${isMega ? '-8px 0px 0px' : '12px 0px 0px'} ;
+            margin: 0.5rem 0 0 0;
             opacity: 0;
-            visibility: hidden; 
+            visibility: hidden;
             z-index: 1000;
         `;
 
-        // Apply settings
-        if (item.settings) {
-            if (item.settings.width) {
-                styles += `width: ${item.settings.width};`;
-                if (isFullWidth) {
-                    styles += `max-width: ${item.settings.width};`;
-                }
+        // Apply settings with defaults
+        if (settings.width) {
+            styles += `width: ${settings.width};`;
+            if (isFullWidth) {
+                styles += `max-width: ${settings.width};`;
+            }
+        }
+
+        if (settings.alignment) {
+            ul.classList.add(`align-${settings.alignment}`);
+            
+            if (settings.alignment === 'center') {
+                styles += `position: fixed;`;
+                styles += `left: 50%;`;
+                styles += `transform: translateX(-50%);`;
+            } else if (settings.alignment === 'right') {
+                styles += `left: auto; right: 0;`;
+            } else if (isFullWidth) {
+                styles += `left: 0; right: 0;`;
+            }
+        }
+
+        if (settings.columns) {
+            ul.style.setProperty('--menu-columns', settings.columns);
+        }
+
+        if (settings.animation) {
+            ul.dataset.animation = settings.animation;
+        }
+
+        ul.style.cssText = styles;
+
+        ul.addEventListener('mouseenter', () => {
+            if (ul.hoverTimeout) {
+                clearTimeout(ul.hoverTimeout);
+            }
+        });
+
+        ul.addEventListener('mouseleave', () => {
+            delayedCloseDropdown(item);
+        });
+
+        // Render content based on type
+        if (isMega && item.groups && item.groups.length > 0) {
+            createMegaMenuGroups(item.groups, null, settings, ul);
+        } else {
+            item.children.forEach(child => {
+                const li = createSubmenuItem(child);
+                ul.appendChild(li);
+            });
+        }
+
+        return ul;
+    }
             }
 
             if (item.settings.alignment) {
@@ -472,11 +531,17 @@ const ThemeixMenu = (function() {
         const groupsContainer = document.createElement('div');
         groupsContainer.className = 'themeix-mega-groups';
 
-        let columnCount = parseInt(settings.columns) || 3;
+        // Apply default settings if settings is missing
+        const mergedSettings = {
+            ...config.defaultMenuSettings,
+            ...settings
+        };
+
+        let columnCount = parseInt(mergedSettings.columns) || 3;
         const totalColumns = columnCount;
         const actualColumnCount = Math.min(totalColumns, groups.length);
         
-        const columnWidth = 100 / actualColumnCount;
+        const columnWidth = actualColumnCount > 0 ? 100 / actualColumnCount : 100;
         
         console.log('Column settings:', { columnCount, totalColumns, actualColumnCount, columnWidth, groupsCount: groups.length });
 
@@ -910,11 +975,18 @@ const ThemeixMenu = (function() {
             menuItem.type = jsonConfig.type;
         }
 
-        // Merge settings
+        // Merge settings with defaults
         if (jsonConfig.settings) {
             menuItem.settings = {
+                ...config.defaultMenuSettings,
                 ...menuItem.settings,
                 ...jsonConfig.settings
+            };
+        } else {
+            // Apply default settings if none provided
+            menuItem.settings = {
+                ...config.defaultMenuSettings,
+                ...menuItem.settings
             };
         }
 
@@ -938,7 +1010,7 @@ const ThemeixMenu = (function() {
             menuItem.groups = processGroups(menuItem.children, jsonConfig.groups, jsonConfig.useGhostChildren !== false);
         }
 
-        console.log('Applied JSON config to:', menuItem.title, 'Type:', menuItem.type);
+        console.log('Applied JSON config to:', menuItem.title, 'Type:', menuItem.type, 'Settings:', menuItem.settings);
     }
 
     function processGroups(ghostChildren, jsonGroups, useGhostChildren = true) {
@@ -1026,7 +1098,10 @@ const ThemeixMenu = (function() {
                 children: [],
                 element: null,
                 hasChildren: false,
-                settings: menuConfig.settings || {},
+                settings: {
+                    ...config.defaultMenuSettings,
+                    ...menuConfig.settings
+                },
                 icon: menuConfig.icon || null,
                 badge: menuConfig.badge || null,
                 description: menuConfig.description || null,

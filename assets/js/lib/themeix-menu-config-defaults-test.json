@@ -1,0 +1,134 @@
+{
+  "version": 1,
+  "globalSettings": {
+    "animationDuration": 300,
+    "mouseDelay": 150,
+    "closeOnClickOutside": true,
+    "closeOnEscape": true,
+    "keyboardNavigation": true,
+    "defaultMenuSettings": {
+      "columns": 3,
+      "width": "800px",
+      "alignment": "eenter",
+      "animation": "slide"
+    }
+  },
+  "menus": [
+    {
+      "match": {
+        "url": "/courses/"
+      },
+      "type": "mega",
+      "groups": [
+        {
+          "title": "Getting Started",
+          "links": [
+            {
+              "title": "Beginner Course",
+              "url": "/courses/beginner/",
+              "icon": "book"
+            },
+            {
+              "title": "Quick Start Guide",
+              "url": "/courses/quickstart/",
+              "icon": "star"
+            }
+          ]
+        },
+        {
+          "title": "Advanced Topics",
+          "links": [
+            {
+              "title": "Advanced Course",
+              "url": "/courses/advanced/",
+              "icon": "palette"
+            },
+            {
+              "title": "Master Class",
+              "url": "/courses/master/",
+              "icon": "settings"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "match": {
+        "url": "/business/"
+      },
+      "type": "mega",
+      "settings": {
+        "columns": 4,
+        "width": "1000px",
+        "alignment": "center",
+        "animation": "fade"
+      },
+      "groups": [
+        {
+          "title": "Business Tools",
+          "links": [
+            {
+              "title": "Analytics",
+              "url": "/business/analytics/",
+              "icon": "search"
+            },
+            {
+              "title": "Marketing",
+              "url": "/business/marketing/",
+              "icon": "megaphone"
+            },
+            {
+              "title": "Sales",
+              "url": "/business/sales/",
+              "badge": "Popular"
+            }
+          ]
+        },
+        {
+          "title": "Resources",
+          "links": [
+            {
+              "title": "Templates",
+              "url": "/business/templates/",
+              "icon": "book"
+            },
+            {
+              "title": "Guides",
+              "url": "/business/guides/",
+              "icon": "heart"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "match": {
+        "url": "/about/"
+      },
+      "type": "dropdown",
+      "settings": {
+        "alignment": "right",
+        "animation": "scale"
+      },
+      "groups": [
+        {
+          "title": "",
+          "links": [
+            {
+              "title": "Our Story",
+              "url": "/about/story/"
+            },
+            {
+              "title": "Team",
+              "url": "/about/team/"
+            },
+            {
+              "title": "Contact",
+              "url": "/about/contact/"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

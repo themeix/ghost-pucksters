@@ -87,22 +87,21 @@
 <div id="comments"></div>
 <script async src="https://talk.hyvor.com/embed/embed.js" type="module"></script>
 
- <script>
+<script>
 	const comments = document.createElement('hyvor-talk-comments');
     comments.setAttribute('website-id', 15612);
-    comments.setAttribute('page-id', "{{ comment_id }}");
+    comments.setAttribute('page-id', "{{id}}");
 
+    {{#if @member}}
         comments.setAttribute('sso-user', JSON.stringify({
             timestamp: Math.floor(Date.now() / 1000),
-            id: "{{ @member.uuid }}",
-            name: "{{ @member.name}}",
-            email: "{{ @member.email}}"
-        }))
+            id: "{{member.uuid}}",
+            name: "{{member.name}}",
+            email: "{{member.email}}"
+        }));
+    {{/if}}
 
-
-
-         document.getElementById("comments").appendChild(comments);
-       
+    document.getElementById("comments").appendChild(comments);
 </script>
 
  

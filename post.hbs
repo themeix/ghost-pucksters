@@ -84,23 +84,8 @@
 
 
  
-<div id="comments"></div>
-
-<script async type="module" src="https://talk.hyvor.com/embed/embed.js"></script>
-
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-    const comments = document.createElement("hyvor-talk-comments");
-
-    comments.setAttribute("website-id", "15612");
-    comments.setAttribute("page-id", "{{id}}");
-    comments.setAttribute("page-title", "{{title}}");
-    comments.setAttribute("page-url", "{{url absolute='true'}}");
-
-    document.getElementById("comments").appendChild(comments);
-});
-</script>
-
+<script async src="https://talk.hyvor.com/embed/embed.js" type="module"></script>
+<hyvor-talk-comments website-id="15612" page-id="{{ comment_id }}"></hyvor-talk-comments>
  
 
 

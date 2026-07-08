@@ -85,25 +85,20 @@
 
  
 <div id="comments"></div>
-<script async src="https://talk.hyvor.com/embed/embed.js" type="module"></script>
+
+<script async type="module" src="https://talk.hyvor.com/embed/embed.js"></script>
 
 <script>
-	const comments = document.createElement('hyvor-talk-comments');
-    comments.setAttribute('website-id', 15612);
-    comments.setAttribute('page-id', "{{id}}");
+document.addEventListener("DOMContentLoaded", () => {
+    const comments = document.createElement("hyvor-talk-comments");
 
-   {{#if @member}}
-        comments.setAttribute('sso-user', JSON.stringify({
-            timestamp: Math.floor(Date.now() / 1000),
-            id: "{{member.uuid}}",
-            name: "{{member.name}}",
-            email: "{{member.email}}"
-        }));
-
-        {{/if}}
- 
+    comments.setAttribute("website-id", "15612");
+    comments.setAttribute("page-id", "{{id}}");
+    comments.setAttribute("page-title", "{{title}}");
+    comments.setAttribute("page-url", "{{url absolute='true'}}");
 
     document.getElementById("comments").appendChild(comments);
+});
 </script>
 
  

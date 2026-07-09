@@ -66,12 +66,27 @@ function css(done) {
 function js(done) {
     pump([
         src([
-            // pull in lib files first so our own code can depend on it
-            'assets/js/lib/*.js',
+            // Core libraries first
+            'assets/js/lib/*.min.js',
+            // Then themeix menu
+            'assets/js/lib/themeix-menu.js',
+            // Then main JS files
             'assets/js/*.js'
         ], {sourcemaps: true}),
         concat('source.js'),
-        uglify(),
+        uglify({
+            compress: {
+                drop_console: true,
+                dead_code: true,
+                unused: true
+            },
+            mangle: {
+                toplevel: false
+            },
+            output: {
+                comments: /^!/
+            }
+        }),
         dest('assets/built/', {sourcemaps: '.'}),
         livereload()
     ], handleError(done));

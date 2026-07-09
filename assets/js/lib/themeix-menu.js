@@ -92,33 +92,72 @@ const ThemeixMenu = (function() {
             console.log('Creating complete menu from JSON, ignoring Ghost navigation');
             menuItems = createMenuFromJSON(config.jsonConfig);
         } else {
-            // Parse Ghost navigation normally
+            // Parse Ghost navigation with multi-level support based on dash count
             const items = Array.from(navList.children);
-            let currentParent = null;
+            const levelStack = []; // Stack to track items at each nesting level
 
             items.forEach((item, index) => {
                 const link = item.querySelector('a');
                 if (!link) return;
 
                 const linkText = link.textContent.trim();
-                const isChild = linkText.startsWith(config.childPrefix);
-
-                if (isChild && currentParent) {
-                    const cleanTitle = linkText.replace(new RegExp(`^${config.childPrefix}+\\s*`), '');
+                
+                // Count dashes at the start to determine nesting level
+                const dashMatch = linkText.match(/^(\-+)\s*(.+)$/);
+                
+                if (dashMatch) {
+                    const dashes = dashMatch[1];
+                    const level = dashes.length; // Each dash represents one level deep
+                    const cleanTitle = dashMatch[2];
                     
-                    const childItem = {
-                        id: `menu-${currentParent.id}-${index}`,
+                    // Create the menu item
+                    const menuItem = {
+                        id: `menu-${index}`,
                         title: cleanTitle,
                         url: link.getAttribute('href'),
                         type: 'link',
-                        element: item
+                        children: [],
+                        element: item,
+                        hasChildren: false,
+                        level: level
                     };
-                    currentParent.children.push(childItem);
+                    
+                    // Find the parent by looking at the stack
+                    // Parent is at level - 1 in the stack
+                    if (level > 0 && levelStack.length >= level) {
+                        const parentItem = levelStack[level - 1];
+                        if (parentItem) {
+                            parentItem.children.push(menuItem);
+                            parentItem.hasChildren = true;
+                            parentItem.type = 'dropdown';
+                            
+                            // Mark all ancestors as having children too
+                            for (let i = 0; i < level; i++) {
+                                if (levelStack[i]) {
+                                    levelStack[i].hasChildren = true;
+                                    levelStack[i].type = 'dropdown';
+                                }
+                            }
+                        }
+                    }
+                    
+                    // Add this item to the appropriate level in the stack
+                    if (levelStack.length > level) {
+                        levelStack[level] = menuItem;
+                        // Remove any items deeper than this level
+                        levelStack.length = level + 1;
+                    } else {
+                        levelStack.push(menuItem);
+                    }
+                    
+                    // If level is 0, this is a top-level item
+                    if (level === 0) {
+                        menuItems.push(menuItem);
+                    }
                     
                     item.style.display = 'none';
-                    
-                    currentParent.element.classList.add('-has-child');
                 } else {
+                    // No dashes - this is a top-level item
                     const menuItem = {
                         id: `menu-${index}`,
                         title: linkText,
@@ -126,10 +165,12 @@ const ThemeixMenu = (function() {
                         type: 'link',
                         children: [],
                         element: item,
-                        hasChildren: false
+                        hasChildren: false,
+                        level: 0
                     };
-
-                    currentParent = menuItem;
+                    
+                    levelStack.length = 0; // Reset stack
+                    levelStack.push(menuItem);
                     menuItems.push(menuItem);
                 }
             });
@@ -306,6 +347,133 @@ const ThemeixMenu = (function() {
         if (item.hasChildren || item.children.length > 0) {
             const submenu = createSubmenu(item);
             element.appendChild(submenu);
+            
+            // Add event listeners for nested submenus
+            addNestedSubmenuListeners(item, submenu);
+        }
+    }
+
+    function addNestedSubmenuListeners(item, submenu) {
+        // Find all items with submenus within this submenu and add their listeners
+        const itemsWithSubmenus = submenu.querySelectorAll('.themeix-submenu-item.has-submenu');
+        
+        itemsWithSubmenus.forEach(submenuItem => {
+            const link = submenuItem.querySelector('.themeix-submenu-link');
+            const nestedSubmenu = submenuItem.querySelector('.themeix-submenu');
+            
+            if (link && nestedSubmenu) {
+                const isMobile = window.innerWidth <= config.mobileBreakpoint || 'ontouchstart' in window;
+                
+                // Add aria attributes for accessibility
+                link.setAttribute('aria-haspopup', 'true');
+                link.setAttribute('aria-expanded', 'false');
+                
+                if (isMobile) {
+                    // Mobile: click to toggle
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        toggleNestedDropdown(nestedSubmenu, link, submenuItem);
+                    });
+                    
+                    link.addEventListener('touchend', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        toggleNestedDropdown(nestedSubmenu, link, submenuItem);
+                    });
+                } else {
+                    // Desktop: hover to open
+                    submenuItem.addEventListener('mouseenter', () => {
+                        clearTimeout(submenuItem.closeTimeout);
+                        if (config.mouseDelay) {
+                            submenuItem.openTimeout = setTimeout(() => {
+                                openNestedDropdown(nestedSubmenu, link);
+                            }, config.mouseDelay);
+                        } else {
+                            openNestedDropdown(nestedSubmenu, link);
+                        }
+                    });
+                    
+                    submenuItem.addEventListener('mouseleave', () => {
+                        clearTimeout(submenuItem.openTimeout);
+                        submenuItem.closeTimeout = setTimeout(() => {
+                            if (!submenuItem.matches(':hover') && !nestedSubmenu.matches(':hover')) {
+                                closeNestedDropdown(nestedSubmenu, link);
+                            }
+                        }, 150);
+                    });
+                    
+                    // Also add listeners to the nested submenu itself
+                    nestedSubmenu.addEventListener('mouseenter', () => {
+                        clearTimeout(submenuItem.closeTimeout);
+                    });
+                    
+                    nestedSubmenu.addEventListener('mouseleave', () => {
+                        submenuItem.closeTimeout = setTimeout(() => {
+                            if (!submenuItem.matches(':hover') && !nestedSubmenu.matches(':hover')) {
+                                closeNestedDropdown(nestedSubmenu, link);
+                            }
+                        }, 150);
+                    });
+                }
+            }
+        });
+    }
+
+    function findChildByElement(children, element) {
+        for (const child of children) {
+            if (child.element === element) {
+                return child;
+            }
+            if (child.children && child.children.length > 0) {
+                const found = findChildByElement(child.children, element);
+                if (found) return found;
+            }
+        }
+        return null;
+    }
+
+    function openNestedDropdown(nestedSubmenu, link) {
+        link.setAttribute('aria-expanded', 'true');
+        link.parentElement.classList.add('is-open');
+        nestedSubmenu.style.visibility = 'visible';
+        nestedSubmenu.style.opacity = '1';
+        nestedSubmenu.style.display = 'block';
+        nestedSubmenu.classList.add('is-open');
+        
+        // Adjust position if needed to prevent viewport overflow
+        adjustNestedSubmenuPosition(nestedSubmenu);
+    }
+
+    function closeNestedDropdown(nestedSubmenu, link) {
+        link.setAttribute('aria-expanded', 'false');
+        link.parentElement.classList.remove('is-open');
+        nestedSubmenu.style.opacity = '0';
+        nestedSubmenu.style.visibility = 'hidden';
+        nestedSubmenu.style.display = 'none';
+        nestedSubmenu.classList.remove('is-open');
+    }
+
+    function toggleNestedDropdown(nestedSubmenu, link, submenuItem) {
+        if (nestedSubmenu.style.display === 'block') {
+            closeNestedDropdown(nestedSubmenu, link);
+        } else {
+            openNestedDropdown(nestedSubmenu, link);
+        }
+    }
+
+    function adjustNestedSubmenuPosition(submenu) {
+        if (!submenu) return;
+        
+        const rect = submenu.getBoundingClientRect();
+        const viewportWidth = window.innerWidth;
+        
+        // Check if submenu goes beyond viewport right edge
+        if (rect.right > viewportWidth - 20) {
+            submenu.style.left = 'auto';
+            submenu.style.right = '100%';
+            submenu.style.marginLeft = '0';
+            submenu.style.marginRight = '0.25rem';
         }
     }
 
@@ -445,9 +613,59 @@ const ThemeixMenu = (function() {
         return ul;
     }
 
+    function createNestedSubmenu(item) {
+        const ul = document.createElement('ul');
+        ul.className = 'themeix-submenu themeix-submenu-dropdown';
+        ul.dataset.menuId = item.id;
+        ul.setAttribute('aria-label', `${item.title} submenu`);
+
+        // Build base styles for nested submenu
+        let styles = `
+            position: absolute;
+            top: 0;
+            left: 100%;
+            min-width: 200px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            padding: 1rem;
+            list-style: none;
+            margin: 0;
+            opacity: 0;
+            visibility: hidden;
+            z-index: 1001;
+        `;
+
+        ul.style.cssText = styles;
+
+        // Add hover events for nested submenu
+        ul.addEventListener('mouseenter', () => {
+            if (ul.hoverTimeout) {
+                clearTimeout(ul.hoverTimeout);
+            }
+        });
+
+        ul.addEventListener('mouseleave', () => {
+            delayedCloseDropdown(item);
+        });
+
+        // Recursively create child items
+        item.children.forEach(child => {
+            const li = createSubmenuItem(child);
+            ul.appendChild(li);
+        });
+
+        return ul;
+    }
+
     function createSubmenuItem(child) {
         const li = document.createElement('li');
         li.className = 'themeix-submenu-item';
+        
+        // Add has-submenu class if this child has its own children
+        if (child.children && child.children.length > 0) {
+            li.classList.add('has-submenu');
+        }
 
         const a = document.createElement('a');
         a.href = child.url;
@@ -475,6 +693,13 @@ const ThemeixMenu = (function() {
         }
 
         li.appendChild(a);
+        
+        // Recursively create nested submenu if this child has children
+        if (child.children && child.children.length > 0) {
+            const nestedSubmenu = createNestedSubmenu(child);
+            li.appendChild(nestedSubmenu);
+        }
+        
         return li;
     }
 
@@ -634,6 +859,9 @@ const ThemeixMenu = (function() {
         submenu.style.opacity = '1';
         submenu.style.display = 'block';
         
+        // Attach event listeners to nested submenus
+        addNestedSubmenuListeners(item, submenu);
+        
         // Check if this is a centered mega menu
         const isCentered = submenu.classList.contains('align-center') && 
                           submenu.classList.contains('themeix-submenu-mega');
@@ -691,11 +919,76 @@ const ThemeixMenu = (function() {
 
     function toggleDropdown(item) {
         const element = item.element;
+        const submenu = element.querySelector('.themeix-submenu');
+        const isMobile = window.innerWidth <= config.mobileBreakpoint || 'ontouchstart' in window;
+        
         if (element.classList.contains('is-open')) {
             closeDropdown(item);
         } else {
             openDropdown(item);
+            // Initialize nested submenu listeners for mobile
+            if (isMobile) {
+                initializeMobileNestedSubmenus(submenu);
+            }
         }
+    }
+
+    function initializeMobileNestedSubmenus(submenu) {
+        const nestedItemsWithSubmenus = submenu.querySelectorAll('.themeix-submenu-item.has-submenu');
+        
+        nestedItemsWithSubmenus.forEach(submenuItem => {
+            const link = submenuItem.querySelector('.themeix-submenu-link');
+            const nestedSubmenu = submenuItem.querySelector('.themeix-submenu');
+            
+            if (link && nestedSubmenu && !link.dataset.mobileListenersAdded) {
+                // Mobile: click to toggle
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    toggleNestedDropdown(nestedSubmenu, link, submenuItem);
+                    
+                    // Initialize sub-nested submenus
+                    const subNestedSubmenus = nestedSubmenu.querySelectorAll('.themeix-submenu-item.has-submenu');
+                    subNestedSubmenus.forEach(subNestedItem => {
+                        const subNestedLink = subNestedItem.querySelector('.themeix-submenu-link');
+                        const subNestedMenu = subNestedItem.querySelector('.themeix-submenu');
+                        
+                        if (subNestedLink && subNestedMenu && !subNestedLink.dataset.mobileListenersAdded) {
+                            subNestedLink.addEventListener('click', (e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                toggleNestedDropdown(subNestedMenu, subNestedLink, subNestedItem);
+                            });
+                            subNestedLink.dataset.mobileListenersAdded = 'true';
+                        }
+                    });
+                });
+                
+                link.addEventListener('touchend', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    toggleNestedDropdown(nestedSubmenu, link, submenuItem);
+                    
+                    // Initialize sub-nested submenus
+                    const subNestedSubmenus = nestedSubmenu.querySelectorAll('.themeix-submenu-item.has-submenu');
+                    subNestedSubmenus.forEach(subNestedItem => {
+                        const subNestedLink = subNestedItem.querySelector('.themeix-submenu-link');
+                        const subNestedMenu = subNestedItem.querySelector('.themeix-submenu');
+                        
+                        if (subNestedLink && subNestedMenu && !subNestedLink.dataset.mobileListenersAdded) {
+                            subNestedLink.addEventListener('click', (e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                toggleNestedDropdown(subNestedMenu, subNestedLink, subNestedItem);
+                            });
+                            subNestedLink.dataset.mobileListenersAdded = 'true';
+                        }
+                    });
+                });
+                
+                link.dataset.mobileListenersAdded = 'true';
+            }
+        });
     }
 
     function delayedCloseDropdown(item) {

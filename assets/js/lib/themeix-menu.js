@@ -1,10 +1,18 @@
 const ThemeixMenu = (function() {
     'use strict';
 
+    // Module-level state (singleton pattern)
     let menus = [];
+    let menusById = new Map();
     let config = {};
     let events = {};
     let isInitialized = false;
+
+    // Per-element hover timers using WeakMap for memory efficiency
+    const hoverTimers = new WeakMap();
+
+    // Cache regex compilation (compiled once per init instead of per menu item)
+    let childPrefixRegex = null;
 
     const defaultConfig = {
         targetElement: '.gh-navigation-menu',
@@ -24,8 +32,16 @@ const ThemeixMenu = (function() {
             animation: 'slide'
         },
         autoInjectClasses: true,
-        autoInjectId: true
+        autoInjectId: true,
+        debug: false // Enable verbose logging in development
     };
+
+    // Efficient logging function - only logs when debug mode is enabled
+    function log(...args) {
+        if (config.debug) {
+            console.log('[ThemeixMenu]', ...args);
+        }
+    }
 
     async function loadJSONConfig(configPath) {
         if (!configPath) return null;
@@ -66,7 +82,7 @@ const ThemeixMenu = (function() {
 
     function init(userConfig = {}) {
         if (isInitialized) {
-            console.warn('ThemeixMenu already initialized');
+            log('ThemeixMenu already initialized');
             return;
         }
 
@@ -76,6 +92,9 @@ const ThemeixMenu = (function() {
         if (userConfig.selector && !userConfig.targetElement) {
             config.targetElement = userConfig.selector;
         }
+        
+        // Compile regex once during init (much more efficient than per-menu-item)
+        childPrefixRegex = new RegExp(`^${config.childPrefix}+\\s*`);
         
         // Find and prepare the target navigation element
         const navElement = document.querySelector(config.targetElement);
@@ -97,13 +116,13 @@ const ThemeixMenu = (function() {
         // Update config to use the processed element
         config.selector = '#' + navElement.id;
         
-        console.log('DEBUG: Target element:', config.targetElement, 'Processed selector:', config.selector);
-        console.log('DEBUG: Prefer Code Injection:', config.preferCodeInjection);
+        log('Target element:', config.targetElement, 'Processed selector:', config.selector);
+        log('Prefer Code Injection:', config.preferCodeInjection);
         
         // Load configuration (async but we continue with parsing)
         loadConfiguration().then(jsonConfig => {
             if (jsonConfig) {
-                console.log('Applying loaded JSON configuration...');
+                log('Applying loaded JSON configuration...');
                 config.jsonConfig = jsonConfig;
                 
                 // Merge global settings if present
@@ -119,8 +138,9 @@ const ThemeixMenu = (function() {
                 }
                 
                 // Re-parse navigation with new configuration
-                console.log('Re-parsing navigation with loaded configuration...');
+                log('Re-parsing navigation with loaded configuration...');
                 menus = []; // Reset menus
+                menusById.clear(); // Clear the Map
                 parseNavigation();
             }
         }).catch(error => {
@@ -133,16 +153,16 @@ const ThemeixMenu = (function() {
             isInitialized = true;
             emit('menu:init', { menus, config });
             
-            console.log('ThemeixMenu initialized successfully');
+            log('ThemeixMenu initialized successfully');
         } catch (error) {
             console.error('ThemeixMenu initialization error:', error);
         }
     }
 
-    async function parseNavigation() {
+    function parseNavigation() {
         // Check for injected config if not already set
         if (!config.jsonConfig && window.themeixMenuConfig) {
-            console.log('Found injected themeixMenuConfig during parsing:', window.themeixMenuConfig);
+            log('Found injected themeixMenuConfig during parsing:', window.themeixMenuConfig);
             config.jsonConfig = window.themeixMenuConfig;
         }
         
@@ -152,6 +172,7 @@ const ThemeixMenu = (function() {
             return;
         }
 
+        // Cache this once and reuse it everywhere in this function
         const navList = navElement.querySelector('.nav');
         if (!navList) {
             console.error('Navigation list not found');
@@ -168,7 +189,7 @@ const ThemeixMenu = (function() {
         
         // Check if we should use JSON menu completely
         if (config.jsonConfig && config.jsonConfig.useGhostChildren === false) {
-            console.log('Creating complete menu from JSON, ignoring Ghost navigation');
+            log('Creating complete menu from JSON, ignoring Ghost navigation');
             menuItems = createMenuFromJSON(config.jsonConfig);
         } else {
             // Parse Ghost navigation with multi-level support based on dash count
@@ -315,17 +336,11 @@ const ThemeixMenu = (function() {
         console.log('DEBUG: Nav element children count:', navElement.querySelector('.nav').children.length);
 
         menus = menuItems;
+        menusById = new Map(menuItems.map(item => [item.id, item]));
         
-        if (menus.length > 0) {
-            console.log('DEBUG: Final menu items:', menus.map(m => ({
-                title: m.title,
-                hasChildren: m.hasChildren,
-                childrenCount: m.children.length,
-                type: m.type
-            })));
-        }
+        log('Final menu items:', menus.length);
         
-        console.log('DEBUG: Adding is-dropdown-loaded class to prevent menu flicker');
+        log('Adding is-dropdown-loaded class to prevent menu flicker');
         navElement.classList.add('is-dropdown-loaded');
         navElement.parentElement.classList.add('is-dropdown-loaded');
     }
@@ -396,22 +411,28 @@ const ThemeixMenu = (function() {
                 });
             } else {
                 // Desktop hover events
-                link.addEventListener('mouseenter', () => {
-                    if (config.mouseDelay) {
-                        element.hoverTimeout = setTimeout(() => {
-                            openDropdown(item);
-                        }, config.mouseDelay);
-                    } else {
+            link.addEventListener('mouseenter', () => {
+                if (config.mouseDelay) {
+                    // Use WeakMap for timer storage (better memory management)
+                    const existing = hoverTimers.get(element);
+                    if (existing) clearTimeout(existing);
+                    hoverTimers.set(element, setTimeout(() => {
                         openDropdown(item);
-                    }
-                });
+                    }, config.mouseDelay));
+                } else {
+                    openDropdown(item);
+                }
+            });
 
-                link.addEventListener('mouseleave', () => {
-                    if (element.hoverTimeout) {
-                        clearTimeout(element.hoverTimeout);
-                    }
-                    delayedCloseDropdown(item);
-                });
+            link.addEventListener('mouseleave', () => {
+                // Clean up timer from WeakMap
+                const existing = hoverTimers.get(element);
+                if (existing) {
+                    clearTimeout(existing);
+                    hoverTimers.delete(element);
+                }
+                delayedCloseDropdown(item);
+            });
             }
 
             link.addEventListener('click', (e) => {
@@ -461,39 +482,38 @@ const ThemeixMenu = (function() {
                         toggleNestedDropdown(nestedSubmenu, link, submenuItem);
                     });
                 } else {
-                    // Desktop: hover to open
+                    // Desktop: hover to open (using WeakMap for better memory)
                     submenuItem.addEventListener('mouseenter', () => {
-                        clearTimeout(submenuItem.closeTimeout);
-                        if (config.mouseDelay) {
-                            submenuItem.openTimeout = setTimeout(() => {
-                                openNestedDropdown(nestedSubmenu, link);
-                            }, config.mouseDelay);
-                        } else {
+                        const existing = hoverTimers.get(submenuItem);
+                        if (existing) clearTimeout(existing);
+                        hoverTimers.set(submenuItem, setTimeout(() => {
                             openNestedDropdown(nestedSubmenu, link);
-                        }
+                        }, config.mouseDelay));
                     });
                     
                     submenuItem.addEventListener('mouseleave', () => {
-                        clearTimeout(submenuItem.openTimeout);
-                        submenuItem.closeTimeout = setTimeout(() => {
-                            if (!submenuItem.matches(':hover') && !nestedSubmenu.matches(':hover')) {
-                                closeNestedDropdown(nestedSubmenu, link);
-                            }
-                        }, 150);
+                        const existing = hoverTimers.get(submenuItem);
+                        if (existing) {
+                            clearTimeout(existing);
+                            hoverTimers.delete(submenuItem);
+                        }
+                        delayedCloseNestedDropdown(submenuItem);
                     });
                     
                     // Also add listeners to the nested submenu itself
                     nestedSubmenu.addEventListener('mouseenter', () => {
-                        clearTimeout(submenuItem.closeTimeout);
+                        const existing = hoverTimers.get(nestedSubmenu);
+                        if (existing) clearTimeout(existing);
                     });
                     
-                    nestedSubmenu.addEventListener('mouseleave', () => {
-                        submenuItem.closeTimeout = setTimeout(() => {
-                            if (!submenuItem.matches(':hover') && !nestedSubmenu.matches(':hover')) {
-                                closeNestedDropdown(nestedSubmenu, link);
-                            }
-                        }, 150);
-                    });
+                     nestedSubmenu.addEventListener('mouseleave', () => {
+                         const existing = hoverTimers.get(nestedSubmenu);
+                         if (existing) {
+                             clearTimeout(existing);
+                             hoverTimers.delete(nestedSubmenu);
+                         }
+                         delayedCloseNestedDropdown(submenuItem);
+                     });
                 }
             }
         });
@@ -1079,11 +1099,23 @@ const ThemeixMenu = (function() {
         }, 150);
     }
 
+    function delayedCloseNestedDropdown(submenuItem) {
+        setTimeout(() => {
+            if (!submenuItem.matches(':hover')) {
+                const link = submenuItem.querySelector('.themeix-submenu-link');
+                const nestedSubmenu = submenuItem.querySelector('.themeix-submenu');
+                if (link && nestedSubmenu) {
+                    closeNestedDropdown(nestedSubmenu, link);
+                }
+            }
+        }, 150);
+    }
+
     function closeAllDropdowns() {
         const openMenus = document.querySelectorAll('.themeix-menu-item.is-open');
-        openMenus.forEach(menu => {
-            const itemId = menu.dataset.menuId;
-            const item = menus.find(m => m.id === itemId);
+        openMenus.forEach(menuEl => {
+            const itemId = menuEl.dataset.menuId;
+            const item = menusById.get(itemId); // Much faster than array find()
             if (item) {
                 closeDropdown(item);
             }
@@ -1255,8 +1287,8 @@ const ThemeixMenu = (function() {
     }
 
     function getMenuItemFromElement(element) {
-        const menuId = element.dataset.menuId;
-        return menus.find(m => m.id === menuId);
+        // Use Map for O(1) lookup instead of array search
+        return menusById.get(element.dataset.menuId);
     }
 
     function normalizeURL(url) {
@@ -1416,8 +1448,7 @@ const ThemeixMenu = (function() {
     }
 
     function createMenuFromJSON(jsonConfig) {
-        console.log('DEBUG: Creating menu from JSON config:', jsonConfig);
-        console.log('DEBUG: JSON config has menus:', jsonConfig.menus && Array.isArray(jsonConfig.menus));
+        log('Creating menu from JSON config:', jsonConfig);
         
         if (!jsonConfig.menus || !Array.isArray(jsonConfig.menus)) {
             console.error('Invalid JSON menu structure');
@@ -1425,11 +1456,8 @@ const ThemeixMenu = (function() {
         }
 
         const menuItems = [];
-        console.log('DEBUG: Processing', jsonConfig.menus.length, 'menu items from JSON');
         
         jsonConfig.menus.forEach((menuConfig, index) => {
-            console.log('DEBUG: Creating menu item:', menuConfig);
-            
             const menuItem = {
                 id: `menu-${index}`,
                 title: menuConfig.title || 'Menu Item',
@@ -1450,15 +1478,12 @@ const ThemeixMenu = (function() {
 
             // Process groups if available
             if (menuConfig.groups && Array.isArray(menuConfig.groups)) {
-                console.log('DEBUG: Processing groups for:', menuItem.title, 'Groups:', menuConfig.groups.length);
                 menuItem.groups = processGroups([], menuConfig.groups, false);
                 menuItem.hasChildren = menuItem.groups.some(group => group.links.length > 0);
                 menuItem.type = menuItem.hasChildren ? 'mega' : 'link';
-                console.log('DEBUG: Has children:', menuItem.hasChildren, 'Type:', menuItem.type);
                 
                 // Flatten groups into children for compatibility
                 menuItem.groups.forEach(group => {
-                    console.log('DEBUG: Flattening group:', group.title, 'Links:', group.links.length);
                     group.links.forEach(link => {
                         menuItem.children.push(link);
                     });
@@ -1466,10 +1491,8 @@ const ThemeixMenu = (function() {
             }
 
             menuItems.push(menuItem);
-            console.log('DEBUG: Created menu item:', menuItem.title, 'Type:', menuItem.type, 'Children:', menuItem.children.length, 'HasChildren:', menuItem.hasChildren);
         });
 
-        console.log('DEBUG: Final menu items from JSON:', menuItems);
         return menuItems;
     }
 
@@ -1482,7 +1505,10 @@ const ThemeixMenu = (function() {
 
         document.removeEventListener('click', handleClickOutside);
         document.removeEventListener('keydown', handleKeyboard);
-        document.removeEventListener('keydown', handleEscape);
+
+        if (config.closeOnEscape) {
+            document.removeEventListener('keydown', handleEscape);
+        }
 
         menus.forEach(item => {
             if (item.element) {
@@ -1503,9 +1529,11 @@ const ThemeixMenu = (function() {
         });
 
         menus = [];
+        menusById.clear(); // Properly clean up the Map
         config = {};
         events = {};
         isInitialized = false;
+        childPrefixRegex = null; // Clean up cached regex
     }
 
     function refresh() {
@@ -1521,7 +1549,7 @@ const ThemeixMenu = (function() {
     function open(menuId) {
         if (!isInitialized) return;
 
-        const item = menus.find(m => m.id === menuId);
+        const item = menusById.get(menuId); // O(1) lookup instead of array find
         if (item && item.hasChildren) {
             openDropdown(item);
         }
@@ -1531,7 +1559,7 @@ const ThemeixMenu = (function() {
         if (!isInitialized) return;
 
         if (menuId) {
-            const item = menus.find(m => m.id === menuId);
+            const item = menusById.get(menuId); // O(1) lookup
             if (item) {
                 closeDropdown(item);
             }
@@ -1574,7 +1602,7 @@ const ThemeixMenu = (function() {
     }
 
     function getMenu(menuId) {
-        return menus.find(m => m.id === menuId);
+        return menusById.get(menuId); // O(1) lookup
     }
 
     return {

@@ -537,7 +537,7 @@ body[class^="gh-font-heading"]:not(.gh-font-heading-fira-sans):not(.gh-font-head
     .gh-navigation-brand .gh-search {
         display: none;
     }
-.gh-navigation-menu.themeix-menu-initialized:not(.is-dropdown-loaded) {
+.gh-navigation-menu:not(.is-dropdown-loaded) {
     opacity: 0;
 }
 }

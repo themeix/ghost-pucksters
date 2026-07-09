@@ -7,7 +7,7 @@ const ThemeixMenu = (function() {
     let isInitialized = false;
 
     const defaultConfig = {
-        selector: '#themeix-main-menu',
+        targetElement: '.gh-navigation-menu',
         mobileBreakpoint: 768,
         animationDuration: 300,
         closeOnClickOutside: true,
@@ -16,13 +16,53 @@ const ThemeixMenu = (function() {
         mouseDelay: 150,
         childPrefix: '-',
         jsonConfigPath: null,
+        preferCodeInjection: true,
         defaultMenuSettings: {
             columns: 3,
             width: 'auto',
             alignment: 'left',
             animation: 'slide'
-        }
+        },
+        autoInjectClasses: true,
+        autoInjectId: true
     };
+
+    async function loadJSONConfig(configPath) {
+        if (!configPath) return null;
+        
+        try {
+            console.log('Attempting to load JSON config from:', configPath);
+            const response = await fetch(configPath);
+            if (!response.ok) {
+                console.warn('Failed to load JSON config:', response.status, response.statusText);
+                return null;
+            }
+            const config = await response.json();
+            console.log('Successfully loaded JSON config from file:', config);
+            return config;
+        } catch (error) {
+            console.warn('Error loading JSON config from file:', error);
+            return null;
+        }
+    }
+
+    async function loadConfiguration() {
+        let jsonConfig = null;
+        
+        // Priority 1: Check for Code Injection config (highest priority)
+        if (window.themeixMenuConfig) {
+            console.log('Found themeixMenuConfig in Code Injection (highest priority)');
+            jsonConfig = window.themeixMenuConfig;
+        }
+        
+        // Priority 2: Load from JSON file path if configured
+        if (!jsonConfig && config.jsonConfigPath) {
+            console.log('Loading JSON config from file path');
+            jsonConfig = await loadJSONConfig(config.jsonConfigPath);
+        }
+        
+        return jsonConfig;
+    }
 
     function init(userConfig = {}) {
         if (isInitialized) {
@@ -32,16 +72,60 @@ const ThemeixMenu = (function() {
 
         config = { ...defaultConfig, ...userConfig };
         
-        // Check for injected config via Ghost Code Injection
-        if (window.themeixMenuConfig) {
-            console.log('Found injected themeixMenuConfig:', window.themeixMenuConfig);
-            config.jsonConfig = window.themeixMenuConfig;
-        } else {
-            console.log('No injected themeixMenuConfig found - will check again during parsing');
+        // Support both old selector and new targetElement for backward compatibility
+        if (userConfig.selector && !userConfig.targetElement) {
+            config.targetElement = userConfig.selector;
         }
         
-        console.log('DEBUG: useGhostChildren setting:', config.jsonConfig ? config.jsonConfig.useGhostChildren : 'not set');
-        console.log('DEBUG: Has JSON config:', !!config.jsonConfig);
+        // Find and prepare the target navigation element
+        const navElement = document.querySelector(config.targetElement);
+        if (!navElement) {
+            console.error('ThemeixMenu: Target navigation element not found:', config.targetElement);
+            return;
+        }
+        
+        // Automatically inject classes and ID if configured
+        if (config.autoInjectClasses) {
+            navElement.classList.add('themeix-menu-initialized');
+            navElement.classList.remove('is-dropdown-loaded');
+        }
+        
+        if (config.autoInjectId && !navElement.id) {
+            navElement.id = 'themeix-main-menu';
+        }
+        
+        // Update config to use the processed element
+        config.selector = '#' + navElement.id;
+        
+        console.log('DEBUG: Target element:', config.targetElement, 'Processed selector:', config.selector);
+        console.log('DEBUG: Prefer Code Injection:', config.preferCodeInjection);
+        
+        // Load configuration (async but we continue with parsing)
+        loadConfiguration().then(jsonConfig => {
+            if (jsonConfig) {
+                console.log('Applying loaded JSON configuration...');
+                config.jsonConfig = jsonConfig;
+                
+                // Merge global settings if present
+                if (jsonConfig.globalSettings) {
+                    config = { ...config, ...jsonConfig.globalSettings };
+                    // Preserve defaultMenuSettings structure
+                    if (jsonConfig.globalSettings.defaultMenuSettings) {
+                        config.defaultMenuSettings = {
+                            ...config.defaultMenuSettings,
+                            ...jsonConfig.globalSettings.defaultMenuSettings
+                        };
+                    }
+                }
+                
+                // Re-parse navigation with new configuration
+                console.log('Re-parsing navigation with loaded configuration...');
+                menus = []; // Reset menus
+                parseNavigation();
+            }
+        }).catch(error => {
+            console.error('Error loading configuration:', error);
+        });
         
         try {
             parseNavigation();
@@ -49,15 +133,7 @@ const ThemeixMenu = (function() {
             isInitialized = true;
             emit('menu:init', { menus, config });
             
-            // Check for JSON config again after parsing (in case it was set after init)
-            if (!config.jsonConfig && window.themeixMenuConfig) {
-                console.log('JSON config found after initial check, re-parsing...');
-                config.jsonConfig = window.themeixMenuConfig;
-                menus = []; // Reset menus
-                parseNavigation();
-            }
-            
-            console.log('ThemeixMenu initialized successfully with', menus.length, 'menu items');
+            console.log('ThemeixMenu initialized successfully');
         } catch (error) {
             console.error('ThemeixMenu initialization error:', error);
         }
@@ -82,7 +158,10 @@ const ThemeixMenu = (function() {
             return;
         }
 
-        navElement.classList.add('themeix-menu-initialized');
+        // Ensure initialization classes are present
+        if (!navElement.classList.contains('themeix-menu-initialized')) {
+            navElement.classList.add('themeix-menu-initialized');
+        }
         navElement.classList.remove('is-dropdown-loaded');
         
         let menuItems = [];
@@ -1029,6 +1108,23 @@ const ThemeixMenu = (function() {
         }
     }
 
+    function getNavigationElement() {
+        // Try the processed selector first
+        let navElement = document.querySelector(config.selector);
+        
+        // Fallback to original target element if needed
+        if (!navElement && config.targetElement) {
+            navElement = document.querySelector(config.targetElement);
+        }
+        
+        // Final fallback to default Ghost navigation class
+        if (!navElement) {
+            navElement = document.querySelector('.gh-navigation-menu');
+        }
+        
+        return navElement;
+    }
+
     function setupEventListeners() {
         document.addEventListener('click', handleClickOutside);
         document.addEventListener('keydown', handleKeyboard);
@@ -1100,7 +1196,7 @@ const ThemeixMenu = (function() {
     function handleClickOutside(e) {
         if (!config.closeOnClickOutside) return;
 
-        const navElement = document.querySelector(config.selector);
+        const navElement = getNavigationElement();
         if (!navElement) return;
 
         if (!navElement.contains(e.target)) {
@@ -1111,7 +1207,7 @@ const ThemeixMenu = (function() {
     function handleKeyboard(e) {
         if (!config.keyboardNavigation) return;
 
-        const navElement = document.querySelector(config.selector);
+        const navElement = getNavigationElement();
         if (!navElement) return;
 
         const focusableElements = navElement.querySelectorAll('a, button');

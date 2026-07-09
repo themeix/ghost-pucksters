@@ -1,29 +1,63 @@
-# Themeix Ghost Dynamic Menu Library - Code Injection Setup
+# Themeix Menu Code Injection Guide
 
-## How to Add Mega Menus Using Ghost Admin
+## Complete Theme-Independent Menu Configuration
 
-### Step 1: Navigate to Code Injection
-1. Go to **Ghost Admin** → **Settings** → **Code Injection**
-2. Scroll down to **Site Footer** section
-3. Paste the configuration code below
+Configure your entire menu system through Ghost Code Injection without touching any theme files!
 
-### Step 2: Add Mega Menu Configuration
+## Setup Process
 
+### Step 1: Clean Theme Files
+
+Your theme files should be minimal:
+
+**navigation.hbs:**
+```handlebars
+<nav class="gh-navigation-menu">
+    {{navigation}}
+</nav>
+```
+
+**main.js:**
 ```javascript
+document.addEventListener('DOMContentLoaded', function() {
+    ThemeixMenu.init();
+});
+```
+
+That's it! No theme modifications needed.
+
+### Step 2: Add Menu Configuration via Ghost Code Injection
+
+Go to **Ghost Admin > Settings > Code Injection > Site Footer** and add:
+
+```html
 <script>
 window.themeixMenuConfig = {
   "version": 1,
+  "globalSettings": {
+    "animationDuration": 300,
+    "mouseDelay": 150,
+    "closeOnClickOutside": true,
+    "closeOnEscape": true,
+    "keyboardNavigation": true,
+    "defaultMenuSettings": {
+      "columns": 3,
+      "width": "800px",
+      "alignment": "center",
+      "animation": "slide"
+    }
+  },
   "menus": [
     {
       "match": {
-        "url": "/courses/"  // Matches your Ghost navigation item URL
+        "url": "/courses/"
       },
-      "type": "mega",       // Change to "mega" for mega menu, "dropdown" for enhanced dropdown
+      "type": "mega",
       "settings": {
-        "columns": 3,       // Number of columns in mega menu
-        "width": "900px",   // Menu width
-        "alignment": "center", // "left", "center", or "right"
-        "animation": "fade"   // "fade", "slide", "scale"
+        "columns": 4,
+        "width": "900px",
+        "alignment": "center",
+        "animation": "fade"
       },
       "groups": [
         {
@@ -31,190 +65,319 @@ window.themeixMenuConfig = {
           "links": [
             {
               "title": "All Courses",
-              "icon": "book"  // Available icons: book, megaphone, palette, star, heart, search, user, settings
+              "url": "/courses/",
+              "icon": "book"
             },
             {
-              "title": "Business",
-              "badge": "Popular"  // Adds a badge
+              "title": "Beginner",
+              "url": "/courses/beginner/",
+              "badge": "Popular",
+              "icon": "star"
             },
             {
-              "title": "Marketing",
-              "icon": "megaphone"
+              "title": "Intermediate",
+              "url": "/courses/intermediate/",
+              "icon": "star"
             },
             {
-              "title": "Design",
-              "icon": "palette"
+              "title": "Advanced",
+              "url": "/courses/advanced/",
+              "icon": "star"
             }
           ]
         },
         {
-          "title": "Skill Levels",
+          "title": "Topics",
           "links": [
             {
-              "title": "Beginner"
+              "title": "Web Development",
+              "url": "/courses/web-dev/",
+              "icon": "palette"
             },
             {
-              "title": "Intermediate"
+              "title": "Data Science",
+              "url": "/courses/data-science/",
+              "icon": "search"
             },
             {
-              "title": "Advanced"
+              "title": "Design",
+              "url": "/courses/design/",
+              "icon": "palette"
+            },
+            {
+              "title": "Business",
+              "url": "/courses/business/",
+              "icon": "megaphone"
             }
           ]
         }
-      ],
-      "featured": {  // Optional featured content card
-        "title": "Start Learning Today",
-        "description": "Browse our latest premium courses and improve your skills.",
-        "image": "/content/images/featured-course.webp",  // Your image path
-        "button": {
-          "text": "Explore Courses",
-          "url": "/courses/"
-        }
-      }
+      ]
     }
   ]
 };
 </script>
 ```
 
-### Step 3: Configure Your Ghost Navigation
+### Step 3: Configure Ghost Navigation with Dash Notation
 
-In **Ghost Admin → Navigation**, add your menu items:
+In **Ghost Admin > Settings > Navigation**, use dash notation for multi-level menus:
 
 ```
-Courses
-- All Courses
-- Business
-- Marketing
-- Design
+Home
+- Home 1
+-- Home 2
+--- Home 3
+---- Home 4
+Services
+- Web Design
+-- UI/UX
+--- User Research
+- Development
+About
+Contact
 ```
-
-The URL for "Courses" should match the `match.url` in your configuration.
 
 ## Configuration Options
 
-### Menu Types
-- **"mega"**: Full mega menu with columns and groups
-- **"dropdown"**: Enhanced dropdown with icons and badges
-- **"link"**: Simple link (default)
+### Global Settings
+- `animationDuration`: Animation speed in milliseconds
+- `mouseDelay`: Hover delay before opening dropdowns
+- `closeOnClickOutside`: Close menus when clicking outside
+- `closeOnEscape`: Close menus with Escape key
+- `keyboardNavigation`: Enable arrow key navigation
+- `defaultMenuSettings`: Default settings for all menus
 
-### Settings
-- **columns**: 1-5 (number of columns for mega menu)
-- **width**: Any valid CSS width (e.g., "900px", "100%", "80vw")
-- **alignment**: "left", "center", or "right"
-- **animation**: "fade", "slide", "scale"
+### Menu Configuration
+- `match`: Criteria to match Ghost navigation items
+  - `url`: Match by URL
+  - `title`: Match by menu title
+  - `label`: Match by label (alternative to title)
+  - `pattern`: Match by regex pattern
+- `type`: Menu type (`mega`, `dropdown`, `link`)
+- `settings`: Specific menu settings
+- `groups`: Group structure for mega menus
+- `featured`: Featured content section
 
-### Available Icons
-- `book` - 📚 Book icon
-- `megaphone` - 📢 Megaphone icon
-- `palette` - 🎨 Palette icon
-- `star` - ⭐ Star icon
-- `heart` - ❤️ Heart icon
-- `search` - 🔍 Search icon
-- `user` - 👤 User icon
-- `settings` - ⚙️ Settings icon
+## Complete JSON Schema
 
-### Matching Options
-Match menu items by:
-- **url**: Exact URL match
-- **title**: Exact title match
-- **pattern**: Regex pattern for URL matching
-
-### Group Structure
 ```json
 {
-  "title": "Group Title",  // Optional group header
-  "links": [
+  "version": 1,
+  "globalSettings": {
+    "animationDuration": 300,
+    "mouseDelay": 150,
+    "closeOnClickOutside": true,
+    "closeOnEscape": true,
+    "keyboardNavigation": true,
+    "defaultMenuSettings": {
+      "columns": 3,
+      "width": "auto",
+      "alignment": "left",
+      "animation": "slide"
+    }
+  },
+  "menus": [
     {
-      "title": "Link Title",  // Must match Ghost navigation item title
-      "icon": "icon-name",    // Optional icon
-      "badge": "Badge Text",  // Optional badge
-      "url": "/custom-url"    // Optional custom URL
+      "match": {
+        "url": "/your-page/"
+      },
+      "type": "mega",
+      "settings": {
+        "columns": 4,
+        "width": "900px",
+        "alignment": "center",
+        "animation": "fade"
+      },
+      "icon": "book",
+      "badge": "New",
+      "description": "Optional description",
+      "groups": [
+        {
+          "title": "Group Title",
+          "links": [
+            {
+              "title": "Link Title",
+              "url": "/link-url/",
+              "icon": "star",
+              "badge": "Popular",
+              "description": "Link description"
+            }
+          ]
+        }
+      ],
+      "featured": {
+        "title": "Featured Title",
+        "description": "Featured description",
+        "image": "/content/images/featured.jpg",
+        "button": {
+          "text": "Call to Action",
+          "url": "/cta-url/"
+        }
+      }
     }
   ]
 }
 ```
 
-## Featured Content (Optional)
-Add a promotional card at the bottom of mega menus:
+## Icon Options
+
+Available built-in icons:
+- `book`
+- `megaphone` 
+- `palette`
+- `star`
+- `heart`
+- `search`
+- `user`
+- `settings`
+
+## Advanced Matching Options
+
+### Match by URL
 ```json
-{
-  "title": "Card Title",
-  "description": "Card description text",
-  "image": "/path/to/image.jpg",
-  "button": {
-    "text": "Button Text",
-    "url": "/destination"
-  }
+"match": {
+  "url": "/courses/"
 }
 ```
 
-## Tips
+### Match by Title
+```json
+"match": {
+  "title": "Courses"
+}
+```
 
-1. **Multiple Menus**: Add multiple menu objects to the `menus` array
-2. **Mix Types**: Use different menu types for different items
-3. **No JSON Required**: Simple dropdowns work without configuration
-4. **Live Preview**: Changes appear immediately after saving
-5. **Debug Mode**: Check browser console for "Applied JSON config to:" messages
+### Match by Pattern (Regex)
+```json
+"match": {
+  "pattern": "/courses/.*"
+}
+```
 
-## Example: Multiple Menu Types
+### Match Multiple Conditions
+```json
+"match": {
+  "url": "/courses/",
+  "title": "Courses"
+}
+```
 
-```javascript
+## Complete Working Example
+
+Copy this to Ghost Code Injection (Site Footer):
+
+```html
+<script>
 window.themeixMenuConfig = {
+  "version": 1,
+  "globalSettings": {
+    "animationDuration": 300,
+    "mouseDelay": 150,
+    "closeOnClickOutside": true,
+    "closeOnEscape": true,
+    "keyboardNavigation": true,
+    "defaultMenuSettings": {
+      "columns": 3,
+      "width": "800px",
+      "alignment": "center",
+      "animation": "slide"
+    }
+  },
   "menus": [
     {
       "match": { "url": "/courses/" },
       "type": "mega",
-      "settings": { "columns": 3, "width": "900px" },
+      "settings": {
+        "columns": 4,
+        "width": "900px",
+        "alignment": "center",
+        "animation": "fade"
+      },
       "groups": [
         {
-          "title": "Categories",
+          "title": "Learning",
           "links": [
-            { "title": "Business", "icon": "briefcase", "badge": "Popular" },
-            { "title": "Marketing", "icon": "megaphone" }
+            { "title": "All Courses", "url": "/courses/", "icon": "book" },
+            { "title": "Beginner", "url": "/courses/beginner/", "icon": "star" },
+            { "title": "Intermediate", "url": "/courses/intermediate/", "icon": "star" },
+            { "title": "Advanced", "url": "/courses/advanced/", "icon": "star" }
+          ]
+        },
+        {
+          "title": "Topics", 
+          "links": [
+            { "title": "Web Dev", "url": "/courses/web-dev/", "icon": "palette" },
+            { "title": "Data Science", "url": "/courses/data-science/", "icon": "search" }
           ]
         }
       ]
     },
     {
-      "match": { "url": "/about/" },
-      "type": "dropdown",
-      "icon": "info-circle",
-      "badge": "New"
-    },
-    {
-      "match": { "title": "Resources" },
+      "match": { "url": "/services/" },
       "type": "mega",
-      "settings": { "columns": 2 },
+      "settings": { "columns": 3, "width": "700px", "alignment": "left" },
       "groups": [
-        { "title": "Documentation", "links": [{ "title": "Getting Started" }] },
-        { "title": "Support", "links": [{ "title": "Help Center" }] }
-      ],
-      "featured": {
-        "title": "Need Help?",
-        "description": "Contact our support team",
-        "button": { "text": "Contact Us", "url": "/contact" }
-      }
+        {
+          "title": "Design",
+          "links": [
+            { "title": "UI/UX Design", "url": "/services/ui-ux/", "icon": "palette" },
+            { "title": "Web Design", "url": "/services/web-design/", "icon": "palette" }
+          ]
+        },
+        {
+          "title": "Development",
+          "links": [
+            { "title": "Frontend", "url": "/services/frontend/", "icon": "search" },
+            { "title": "Backend", "url": "/services/backend/", "icon": "search" }
+          ]
+        }
+      ]
     }
   ]
 };
+</script>
 ```
+
+## Priority System
+
+1. **Code Injection** (`window.themeixMenuConfig`) - Highest priority
+2. **JSON File** (`jsonConfigPath`) - Falls back if Code Injection not found
+3. **Ghost Navigation** - Uses dash notation if no JSON config
+
+## Benefits
+
+✅ **No theme modifications** - Configure everything from Ghost Admin  
+✅ **Theme updates safe** - Your config survives theme updates  
+✅ **Multi-site support** - Different configs per Ghost site  
+✅ **Easy testing** - Quickly test different menu configurations  
+✅ **Non-developer friendly** - JSON configuration in admin panel  
+✅ **Version control** - Copy/paste configurations between sites  
 
 ## Troubleshooting
 
-**Menu not appearing as mega menu?**
-- Check that the URL in `match.url` exactly matches your Ghost navigation item
-- Look for "Applied JSON config to:" in browser console
-- Ensure "Courses" item exists in Ghost navigation
-
-**Icons not showing?**
-- Use exact icon names from the available icons list
+### Configuration Not Loading
 - Check browser console for errors
+- Verify JSON syntax is valid
+- Ensure script is in Site Footer, not Site Header
+- Check that `window.themeixMenuConfig` is set
 
-**Featured image not loading?**
-- Use absolute path or correct relative path
-- Ensure image file exists in your Ghost content directory
+### Menu Not Appearing
+- Verify `match.url` matches your Ghost navigation exactly
+- Check that Ghost navigation items exist
+- Ensure CSS files are loaded
+- Check for JavaScript errors in console
 
-**Columns not aligning properly?**
-- Check that `columns` setting matches your group count
-- Adjust `width` setting if needed
+### Styling Issues
+- Verify CSS files are properly linked
+- Check for conflicting CSS in other files
+- Ensure theme CSS variables are set correctly
+
+## Migration from File-Based Config
+
+If you're currently using `jsonConfigPath`, simply:
+
+1. Copy your JSON file content
+2. Paste into Ghost Code Injection with `window.themeixMenuConfig =`
+3. Remove `jsonConfigPath` from your initialization
+
+Your menu will work exactly the same, but now configured entirely from Ghost Admin!

@@ -10,7 +10,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Deploy Zora Ghost Theme
-        uses: TryGhost/action-deploy-theme@v1
+        uses: TryGhost/action-deploy-theme@b1ff2a5eeac1d5438a0aab35eb996fe4010d889e # v2
         with:
           api-url: ${{ secrets.GHOST_ADMIN_API_URL }}
           api-key: ${{ secrets.GHOST_ADMIN_API_KEY }}

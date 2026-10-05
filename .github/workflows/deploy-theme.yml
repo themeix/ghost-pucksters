@@ -8,9 +8,9 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - name: Deploy Zora Ghost Theme
-        uses: TryGhost/action-deploy-theme@v1
+        uses: TryGhost/action-deploy-theme@a0ee1147d15641db25681e54549c4db9a53c2629 # v1
         with:
           api-url: ${{ secrets.GHOST_ADMIN_API_URL }}
           api-key: ${{ secrets.GHOST_ADMIN_API_KEY }}
